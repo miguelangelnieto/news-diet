@@ -203,9 +203,10 @@
         var articleElement = document.querySelector('[data-article-id="' + articleId + '"]');
         if (!articleElement) return;
         
-        // Check if we're in the "All" tab by looking at the URL
+        // Check if we're in the "All" or "Starred" tab by looking at the URL
         var urlParams = new URLSearchParams(window.location.search);
         var isAllTab = urlParams.get('show_all') === 'true';
+        var isStarredTab = urlParams.get('filter_starred') === 'true';
         
         fetch('/api/articles/' + articleId + '/read?is_read=' + isRead, { method: 'PATCH' })
             .then(function(response) {
@@ -218,8 +219,8 @@
                     articleElement.dataset.read = isRead;
                     
                     if (isRead === 'true') {
-                        if (isAllTab) {
-                            // In "All" tab: just update styling, don't remove
+                        if (isAllTab || isStarredTab) {
+                            // In "All" or "Starred" tab: just update styling, don't remove
                             // Add opacity and update button styling
                             articleElement.classList.add('opacity-60');
                             
@@ -354,6 +355,22 @@
                         starButton.setAttribute('aria-label', 'Star article');
                         starButton.dataset.isStarred = 'false';
                         updateStarredCount(-1);
+                        
+                        // In "Starred" tab: fade out and remove when unstarred
+                        var urlParams = new URLSearchParams(window.location.search);
+                        if (urlParams.get('filter_starred') === 'true') {
+                            articleElement.style.opacity = '0';
+                            articleElement.style.maxHeight = articleElement.offsetHeight + 'px';
+                            articleElement.style.transform = 'translateX(-20px)';
+                            setTimeout(function() {
+                                articleElement.style.maxHeight = '0';
+                                articleElement.style.marginBottom = '0';
+                                articleElement.style.paddingTop = '0';
+                                articleElement.style.paddingBottom = '0';
+                            }, 200);
+                            setTimeout(function() { articleElement.remove(); }, 500);
+                            return;
+                        }
                     }
                     
                     // Add a little bounce animation
