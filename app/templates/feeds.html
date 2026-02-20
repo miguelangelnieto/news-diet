@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Feed Management - News Diet{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-latte-text dark:text-frappe-text">RSS Feed Management</h2>
+        <p class="text-latte-subtext0 dark:text-frappe-subtext0 mt-1">Manage your news sources</p>
+    </div>
+    
+    <!-- Add New Feed Form -->
+    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-latte-text dark:text-frappe-text mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-latte-blue dark:text-frappe-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Add New Feed
+        </h3>
+        <form id="add-feed-form" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="feed-url" class="block text-sm font-medium text-latte-subtext1 dark:text-frappe-subtext1 mb-2">Feed URL</label>
+                    <input 
+                        type="url" 
+                        id="feed-url" 
+                        name="url" 
+                        required
+                        placeholder="https://example.com/rss"
+                        class="w-full px-4 py-2.5 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors"
+                    >
+                </div>
+                <div>
+                    <label for="feed-name" class="block text-sm font-medium text-latte-subtext1 dark:text-frappe-subtext1 mb-2">Feed Name</label>
+                    <input 
+                        type="text" 
+                        id="feed-name" 
+                        name="name" 
+                        required
+                        placeholder="My Tech Blog"
+                        class="w-full px-4 py-2.5 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors"
+                    >
+                </div>
+            </div>
+            <button 
+                type="submit"
+                class="inline-flex items-center gap-2 bg-latte-blue dark:bg-frappe-blue hover:bg-latte-sapphire dark:hover:bg-frappe-sapphire text-white px-5 py-2.5 rounded-xl font-medium shadow-sm hover:shadow transition-all"
+            >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add Feed
+            </button>
+        </form>
+    </div>
+    
+    <!-- Feeds List -->
+    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-latte-surface0 dark:border-frappe-surface0">
+            <h3 class="text-lg font-semibold text-latte-text dark:text-frappe-text">Your Feeds</h3>
+        </div>
+        
+        <div class="divide-y divide-latte-surface0 dark:divide-frappe-surface0">
+            {% if feeds %}
+                {% for feed in feeds %}
+                <div class="px-6 py-4 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 transition-colors" data-feed-id="{{ feed.id }}">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <h4 class="text-base font-medium text-latte-text dark:text-frappe-text truncate">
+                                    {{ feed.name }}
+                                </h4>
+                                {% if not feed.enabled %}
+                                <span class="px-2 py-0.5 bg-latte-surface1 dark:bg-frappe-surface1 text-latte-subtext0 dark:text-frappe-subtext0 text-xs font-medium rounded-full">
+                                    Disabled
+                                </span>
+                                {% endif %}
+                                {% if feed.error_count > 0 %}
+                                <span class="px-2 py-0.5 bg-latte-red/10 dark:bg-frappe-red/20 text-latte-red dark:text-frappe-red text-xs font-medium rounded-full">
+                                    {{ feed.error_count }} error{% if feed.error_count != 1 %}s{% endif %}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mt-1 truncate">{{ feed.url }}</p>
+                            {% if feed.last_fetched_at %}
+                            <p class="text-xs text-latte-overlay0 dark:text-frappe-overlay0 mt-1">
+                                Last fetched: {{ feed.last_fetched_at.strftime('%b %d, %Y %H:%M') }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <button 
+                                onclick="toggleFeed('{{ feed.id }}', {{ 'false' if feed.enabled else 'true' }})"
+                                class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
+                                       {% if feed.enabled %}bg-latte-green/10 dark:bg-frappe-green/20 text-latte-green dark:text-frappe-green hover:bg-latte-green/20 dark:hover:bg-frappe-green/30{% else %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface1 dark:hover:bg-frappe-surface1{% endif %}"
+                            >
+                                {% if feed.enabled %}Enabled{% else %}Disabled{% endif %}
+                            </button>
+                            
+                            <button 
+                                onclick="deleteFeed('{{ feed.id }}')"
+                                class="p-2 text-latte-red dark:text-frappe-red hover:bg-latte-red/10 dark:hover:bg-frappe-red/20 rounded-lg transition-colors"
+                                title="Delete feed"
+                            >
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="px-6 py-12 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-latte-surface0 dark:bg-frappe-surface0 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-latte-overlay0 dark:text-frappe-overlay0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-latte-text dark:text-frappe-text">No feeds yet</h3>
+                    <p class="mt-2 text-latte-subtext0 dark:text-frappe-subtext0 text-sm">Add your first RSS feed above to get started</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add new feed
+    document.getElementById('add-feed-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        var formData = new FormData(e.target);
+        var data = {
+            url: formData.get('url'),
+            name: formData.get('name'),
+            enabled: true
+        };
+        
+        try {
+            var response = await fetch('/api/feeds', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            var result = await response.json();
+            
+            if (response.ok) {
+                showToast('Feed added successfully!', 'success');
+                setTimeout(function() { location.reload(); }, 1000);
+            } else {
+                showToast(result.detail || 'Failed to add feed', 'error');
+            }
+        } catch (error) {
+            showToast('Error adding feed', 'error');
+            console.error('Error:', error);
+        }
+    });
+    
+    // Toggle feed enabled/disabled
+    async function toggleFeed(feedId, enabled) {
+        try {
+            var url = '/api/feeds/' + feedId;
+            var response = await fetch(url, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ enabled: enabled })
+            });
+            
+            if (response.ok) {
+                var message = enabled ? 'Feed enabled' : 'Feed disabled';
+                showToast(message, 'success');
+                setTimeout(function() { location.reload(); }, 1000);
+            } else {
+                showToast('Failed to update feed', 'error');
+            }
+        } catch (error) {
+            showToast('Error updating feed', 'error');
+            console.error('Error:', error);
+        }
+    }
+    
+    // Delete feed
+    async function deleteFeed(feedId) {
+        if (!confirm('Are you sure you want to delete this feed? This will also remove all articles from this feed.')) {
+            return;
+        }
+        
+        try {
+            var url = '/api/feeds/' + feedId;
+            var response = await fetch(url, { method: 'DELETE' });
+            
+            if (response.ok) {
+                showToast('Feed deleted successfully', 'success');
+                setTimeout(function() { location.reload(); }, 1000);
+            } else {
+                showToast('Failed to delete feed', 'error');
+            }
+        } catch (error) {
+            showToast('Error deleting feed', 'error');
+            console.error('Error:', error);
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,66 @@
+services:
+  mongo:
+    image: mongo:8.0
+    container_name: newsdiet-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    # Internal only - no external port exposure for security
+    expose:
+      - "27017"
+    environment:
+      MONGO_INITDB_DATABASE: newsdiet
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --eval 'db.adminCommand(\"ping\")' --quiet"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  ollama:
+    image: ollama/ollama:0.5.12
+    container_name: newsdiet-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+    # Internal only - no external port exposure for security
+    expose:
+      - "11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  app:
+    build: .
+    container_name: newsdiet-app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      MONGODB_URL: mongodb://mongo:27017
+      MONGODB_DB: newsdiet
+      OLLAMA_BASE_URL: http://ollama:11434/v1
+      OLLAMA_MODEL: qwen2.5:3b
+      OLLAMA_TIMEOUT: 120
+      RSS_FETCH_INTERVAL_HOURS: 1
+      LOG_LEVEL: INFO
+    depends_on:
+      mongo:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    volumes:
+      - ./app:/app/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  mongo_data:
+  ollama_data:

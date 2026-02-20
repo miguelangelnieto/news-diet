@@ -1,0 +1,25 @@
+{
+  "name": "News Diet",
+  "short_name": "News Diet",
+  "description": "AI-powered RSS news aggregator inspired by Google Reader",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#eff1f5",
+  "theme_color": "#1e66f5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/favicon.svg",
+      "sizes": "32x32",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["news", "productivity"],
+  "screenshots": []
+}

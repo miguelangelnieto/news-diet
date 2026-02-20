@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - News Diet{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header with Actions -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-latte-text dark:text-frappe-text">Your News Feed</h2>
+            <p class="text-latte-subtext0 dark:text-frappe-subtext0 mt-1">
+                <span class="inline-flex items-center gap-3">
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-latte-blue dark:bg-frappe-blue"></span>
+                        <span id="unread-count">{{ unread_count }} unread</span>
+                    </span>
+                    {% if starred_count > 0 %}
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-latte-yellow dark:bg-frappe-yellow"></span>
+                        <span id="starred-count">{{ starred_count }} starred</span>
+                    </span>
+                    {% endif %}
+                </span>
+            </p>
+        </div>
+    </div>
+    
+    <!-- Processing indicator -->
+    <div id="processing-indicator" class="hidden bg-latte-yellow/10 dark:bg-frappe-yellow/10 border border-latte-yellow/30 dark:border-frappe-yellow/30 rounded-xl p-4">
+        <div class="flex items-center gap-3">
+            <svg class="animate-spin h-5 w-5 text-latte-yellow dark:text-frappe-yellow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span class="text-latte-yellow dark:text-frappe-yellow font-medium text-sm">Processing articles with AI... this might take a minute (CPU inference)</span>
+        </div>
+    </div>
+    
+    <!-- Tabs-style Filters -->
+    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-xl p-2">
+        <div class="flex flex-wrap gap-1">
+            <a href="/" 
+               id="tab-relevant"
+               class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all {% if not show_all and not filter_unread and not filter_starred %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-text dark:text-frappe-text shadow-sm{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50{% endif %}">
+                Relevant ({{ min_relevance_score }}+)
+            </a>
+            <a href="/?show_all=true" 
+               id="tab-all"
+               class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all {% if show_all %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-text dark:text-frappe-text shadow-sm{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50{% endif %}">
+                All
+            </a>
+            <a href="/?filter_unread=true" 
+               id="tab-unread"
+               class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all {% if filter_unread %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-text dark:text-frappe-text shadow-sm{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50{% endif %}">
+                Unread
+            </a>
+            <a href="/?filter_starred=true" 
+               id="tab-starred"
+               class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all {% if filter_starred %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-text dark:text-frappe-text shadow-sm{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50{% endif %}">
+                Starred
+            </a>
+        </div>
+    </div>
+    
+    <!-- Articles List -->
+    <div class="space-y-3" id="articles-container">
+        {% if articles %}
+            {% for article in articles %}
+            <article class="article-item article-card bg-latte-mantle dark:bg-frappe-mantle rounded-xl p-5 
+                        {% if article.relevance_score >= 8 %}score-high{% elif article.relevance_score >= 5 %}score-medium{% else %}score-low{% endif %}
+                        {% if article.is_read %}opacity-60{% endif %}
+                        hover:shadow-md dark:hover:shadow-frappe-crust/50 transition-all"
+                 data-article-id="{{ article.id }}"
+                 data-relevance="{{ article.relevance_score }}"
+                 data-read="{{ 'true' if article.is_read else 'false' }}"
+                 data-starred="{{ 'true' if article.is_starred else 'false' }}"
+                 style="transition: opacity 0.3s ease, transform 0.3s ease, max-height 0.3s ease, margin 0.3s ease, padding 0.3s ease; overflow: hidden;">
+                
+                <div class="flex justify-between items-start gap-4">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start gap-2">
+                            <!-- Star Button -->
+                            <button 
+                                type="button"
+                                class="star-toggle shrink-0 mt-1 p-1 rounded transition-all {% if article.is_starred %}text-latte-yellow dark:text-frappe-yellow{% else %}text-latte-overlay0 dark:text-frappe-overlay0 hover:text-latte-yellow dark:hover:text-frappe-yellow{% endif %}"
+                                style="transition: transform 0.2s ease, color 0.15s ease;"
+                                data-article-id="{{ article.id }}"
+                                data-is-starred="{{ 'true' if article.is_starred else 'false' }}"
+                                title="{% if article.is_starred %}Unstar{% else %}Star{% endif %} article"
+                                aria-label="{% if article.is_starred %}Unstar{% else %}Star{% endif %} article"
+                            >
+                                <svg class="w-5 h-5" fill="{% if article.is_starred %}currentColor{% else %}none{% endif %}" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                                </svg>
+                            </button>
+                            <div class="flex-1 min-w-0">
+                                <a href="{{ article.url }}" target="_blank" rel="noopener" class="text-lg font-semibold text-latte-text dark:text-frappe-text hover:text-latte-blue dark:hover:text-frappe-blue transition-colors line-clamp-2">
+                                    {{ article.title }}
+                                </a>
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-sm text-latte-subtext0 dark:text-frappe-subtext0">
+                                    <span class="font-medium text-latte-subtext1 dark:text-frappe-subtext1">{{ article.source }}</span>
+                                    <span class="text-latte-overlay0 dark:text-frappe-overlay0">•</span>
+                                    <span>{{ article.published_at.strftime('%b %d, %Y') }}</span>
+                                    <span class="text-latte-overlay0 dark:text-frappe-overlay0">•</span>
+                                    <span class="inline-flex items-center gap-1 font-semibold
+                                        {% if article.relevance_score >= 8 %}text-latte-green dark:text-frappe-green
+                                        {% elif article.relevance_score >= 5 %}text-latte-yellow dark:text-frappe-yellow
+                                        {% else %}text-latte-overlay0 dark:text-frappe-overlay0{% endif %}">
+                                        {{ article.relevance_score }}/10
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Read/Unread Checkmark Icon -->
+                    <button 
+                        type="button"
+                        class="read-toggle shrink-0 p-2 rounded-lg transition-colors
+                               {% if article.is_read %}text-latte-green dark:text-frappe-green bg-latte-green/10 dark:bg-frappe-green/10 hover:bg-latte-green/20 dark:hover:bg-frappe-green/20{% else %}text-latte-overlay0 dark:text-frappe-overlay0 hover:bg-latte-surface0 dark:hover:bg-frappe-surface0{% endif %}"
+                        data-article-id="{{ article.id }}"
+                        data-is-read="{{ 'true' if article.is_read else 'false' }}"
+                        title="{% if article.is_read %}Mark as unread{% else %}Mark as read{% endif %}"
+                        aria-label="{% if article.is_read %}Mark as unread{% else %}Mark as read{% endif %}"
+                    >
+                        <svg class="w-5 h-5" fill="{% if article.is_read %}currentColor{% else %}none{% endif %}" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                {% if article.summary %}
+                <p class="text-latte-subtext1 dark:text-frappe-subtext1 mt-3 ml-7 text-sm leading-relaxed">{{ article.summary }}</p>
+                {% endif %}
+                
+                {% if article.tags %}
+                <div class="flex flex-wrap gap-1.5 mt-3 ml-7">
+                    {% for tag in article.tags %}
+                    <span class="px-2.5 py-0.5 bg-latte-surface0 dark:bg-frappe-surface0 text-latte-subtext0 dark:text-frappe-subtext0 text-xs font-medium rounded-full">
+                        {{ tag }}
+                    </span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </article>
+            {% endfor %}
+        {% else %}
+            <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-xl p-12 text-center">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-latte-surface0 dark:bg-frappe-surface0 flex items-center justify-center">
+                    <svg class="w-8 h-8 text-latte-overlay0 dark:text-frappe-overlay0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-latte-text dark:text-frappe-text">No articles found</h3>
+                {% if not show_all %}
+                <p class="mt-2 text-latte-subtext0 dark:text-frappe-subtext0 text-sm">No articles meet your minimum relevance score ({{ min_relevance_score }}+)</p>
+                <a href="/?show_all=true" class="inline-block mt-3 text-latte-blue dark:text-frappe-blue text-sm font-medium hover:underline">View all articles →</a>
+                {% else %}
+                <p class="mt-2 text-latte-subtext0 dark:text-frappe-subtext0 text-sm">Click "Refresh" to fetch articles from your RSS feeds</p>
+                <p class="mt-1 text-latte-overlay0 dark:text-frappe-overlay0 text-xs">Make sure you have some feeds added first</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Event delegation for read toggle buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            // Check if clicked element is a read toggle button
+            var readBtn = e.target.closest('.read-toggle');
+            if (readBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                var articleId = readBtn.dataset.articleId;
+                var currentRead = readBtn.dataset.isRead;
+                var newRead = currentRead === 'true' ? 'false' : 'true';
+                
+                toggleRead(articleId, newRead);
+                return false;
+            }
+            
+            // Check if clicked element is a star toggle button
+            var starBtn = e.target.closest('.star-toggle');
+            if (starBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                var articleId = starBtn.dataset.articleId;
+                var currentStarred = starBtn.dataset.isStarred;
+                var newStarred = currentStarred === 'true' ? 'false' : 'true';
+                
+                toggleStar(articleId, newStarred);
+                return false;
+            }
+        });
+    });
+    
+    // Toggle read status with smooth animation
+    function toggleRead(articleId, isRead) {
+        var articleElement = document.querySelector('[data-article-id="' + articleId + '"]');
+        if (!articleElement) return;
+        
+        // Check if we're in the "All" tab by looking at the URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var isAllTab = urlParams.get('show_all') === 'true';
+        
+        fetch('/api/articles/' + articleId + '/read?is_read=' + isRead, { method: 'PATCH' })
+            .then(function(response) {
+                if (!response.ok) throw new Error('Failed to update');
+                return response.json();
+            })
+            .then(function(data) { 
+                if (data.success) {
+                    // Update data attribute
+                    articleElement.dataset.read = isRead;
+                    
+                    if (isRead === 'true') {
+                        if (isAllTab) {
+                            // In "All" tab: just update styling, don't remove
+                            // Add opacity and update button styling
+                            articleElement.classList.add('opacity-60');
+                            
+                            // Update the read button
+                            var readButton = articleElement.querySelector('.read-toggle');
+                            if (readButton) {
+                                // Add 'read' styling
+                                var addClasses = [
+                                    'text-latte-green', 'dark:text-frappe-green',
+                                    'bg-latte-green/10', 'dark:bg-frappe-green/10',
+                                    'hover:bg-latte-green/20', 'dark:hover:bg-frappe-green/20'
+                                ];
+                                readButton.classList.add(...addClasses);
+                                
+                                // Remove 'unread' styling
+                                var removeClasses = [
+                                    'text-latte-overlay0', 'dark:text-frappe-overlay0',
+                                    'hover:bg-latte-surface0', 'dark:hover:bg-frappe-surface0'
+                                ];
+                                readButton.classList.remove(...removeClasses);
+                                
+                                var icon = readButton.querySelector('svg');
+                                if (icon) icon.setAttribute('fill', 'currentColor');
+                                readButton.title = 'Mark as unread';
+                                readButton.setAttribute('aria-label', 'Mark as unread');
+                                readButton.dataset.isRead = 'true';
+                            }
+                            
+                            updateUnreadCount(-1);
+                        } else {
+                            // In other tabs: fade out and slide up (original behavior)
+                            articleElement.style.opacity = '0';
+                            articleElement.style.maxHeight = articleElement.offsetHeight + 'px';
+                            articleElement.style.transform = 'translateX(-20px)';
+                            
+                            setTimeout(function() {
+                                articleElement.style.maxHeight = '0';
+                                articleElement.style.marginBottom = '0';
+                                articleElement.style.paddingTop = '0';
+                                articleElement.style.paddingBottom = '0';
+                            }, 200);
+                            
+                            setTimeout(function() {
+                                articleElement.remove();
+                                updateUnreadCount(-1);
+                            }, 500);
+                        }
+                    } else {
+                        // Marking as unread - update UI without page reload
+                        articleElement.classList.remove('opacity-60');
+                        
+                        // Update the read button
+                        var readButton = articleElement.querySelector('.read-toggle');
+                        if (readButton) {
+                            // Remove 'read' styling
+                            var removeClasses = [
+                                'text-latte-green', 'dark:text-frappe-green',
+                                'bg-latte-green/10', 'dark:bg-frappe-green/10',
+                                'hover:bg-latte-green/20', 'dark:hover:bg-frappe-green/20'
+                            ];
+                            readButton.classList.remove(...removeClasses);
+                            
+                            // Add 'unread' styling
+                            var addClasses = [
+                                'text-latte-overlay0', 'dark:text-frappe-overlay0',
+                                'hover:bg-latte-surface0', 'dark:hover:bg-frappe-surface0'
+                            ];
+                            readButton.classList.add(...addClasses);
+                            
+                            var icon = readButton.querySelector('svg');
+                            if (icon) icon.setAttribute('fill', 'none');
+                            readButton.title = 'Mark as read';
+                            readButton.setAttribute('aria-label', 'Mark as read');
+                            readButton.dataset.isRead = 'false';
+                        }
+                        
+                        updateUnreadCount(1);
+                    }
+                } else {
+                    showToast('Failed to update article', 'error');
+                }
+            })
+            .catch(function(error) { 
+                console.error('Error:', error);
+                showToast('Network error. Please try again.', 'error');
+            });
+    }
+    
+    // Update unread count in header
+    function updateUnreadCount(delta) {
+        var unreadSpan = document.getElementById('unread-count');
+        if (unreadSpan) {
+            var currentText = unreadSpan.textContent.trim();
+            var currentCount = parseInt(currentText.split(' ')[0]);
+            var newCount = Math.max(0, currentCount + delta);
+            unreadSpan.textContent = newCount + ' unread';
+        }
+    }
+    
+    // Toggle star status with smooth animation
+    function toggleStar(articleId, isStarred) {
+        var articleElement = document.querySelector('[data-article-id="' + articleId + '"]');
+        if (!articleElement) return;
+        
+        fetch('/api/articles/' + articleId + '/star?is_starred=' + isStarred, { method: 'PATCH' })
+            .then(function(response) {
+                if (!response.ok) throw new Error('Failed to update');
+                return response.json();
+            })
+            .then(function(data) { 
+                if (data.success) {
+                    // Update data attribute
+                    articleElement.dataset.starred = isStarred;
+                    
+                    // Update the star button
+                    var starButton = articleElement.querySelector('.star-toggle');
+                    var starIcon = starButton.querySelector('svg');
+                    
+                    if (isStarred === 'true') {
+                        starButton.classList.add('text-latte-yellow', 'dark:text-frappe-yellow');
+                        starButton.classList.remove('text-latte-overlay0', 'dark:text-frappe-overlay0', 'hover:text-latte-yellow', 'dark:hover:text-frappe-yellow');
+                        starIcon.setAttribute('fill', 'currentColor');
+                        starButton.title = 'Unstar article';
+                        starButton.setAttribute('aria-label', 'Unstar article');
+                        starButton.dataset.isStarred = 'true';
+                        updateStarredCount(1);
+                    } else {
+                        starButton.classList.remove('text-latte-yellow', 'dark:text-frappe-yellow');
+                        starButton.classList.add('text-latte-overlay0', 'dark:text-frappe-overlay0', 'hover:text-latte-yellow', 'dark:hover:text-frappe-yellow');
+                        starIcon.setAttribute('fill', 'none');
+                        starButton.title = 'Star article';
+                        starButton.setAttribute('aria-label', 'Star article');
+                        starButton.dataset.isStarred = 'false';
+                        updateStarredCount(-1);
+                    }
+                    
+                    // Add a little bounce animation
+                    starButton.style.transform = 'scale(1.3)';
+                    setTimeout(function() {
+                        starButton.style.transform = 'scale(1)';
+                    }, 200);
+                } else {
+                    showToast('Failed to star article', 'error');
+                }
+            })
+            .catch(function(error) { 
+                console.error('Error:', error);
+                showToast('Network error. Please try again.', 'error');
+            });
+    }
+    
+    // Update starred count in header
+    function updateStarredCount(delta) {
+        var starredSpan = document.getElementById('starred-count');
+        if (starredSpan) {
+            var currentText = starredSpan.textContent.trim();
+            var currentCount = parseInt(currentText.split(' ')[0]);
+            var newCount = Math.max(0, currentCount + delta);
+            starredSpan.textContent = newCount + ' starred';
+            
+            // Show/hide the starred count section
+            var starredContainer = starredSpan.closest('.inline-flex.items-center.gap-1\\.5');
+            if (starredContainer) {
+                if (newCount === 0) {
+                    starredContainer.style.display = 'none';
+                } else {
+                    starredContainer.style.display = 'inline-flex';
+                }
+            }
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" class="{{ 'dark' if dark_mode else '' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}News Diet{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="apple-touch-icon" href="/static/icon.svg">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="AI-powered RSS news aggregator inspired by Google Reader">
+    <meta name="theme-color" content="#1e66f5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="News Diet">
+    <link rel="manifest" href="/static/manifest.json">
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // Catppuccin Latte (Light Mode)
+                        latte: {
+                            rosewater: '#dc8a78',
+                            flamingo: '#dd7878',
+                            pink: '#ea76cb',
+                            mauve: '#8839ef',
+                            red: '#d20f39',
+                            maroon: '#e64553',
+                            peach: '#fe640b',
+                            yellow: '#df8e1d',
+                            green: '#40a02b',
+                            teal: '#179299',
+                            sky: '#04a5e5',
+                            sapphire: '#209fb5',
+                            blue: '#1e66f5',
+                            lavender: '#7287fd',
+                            text: '#4c4f69',
+                            subtext1: '#5c5f77',
+                            subtext0: '#6c6f85',
+                            overlay2: '#7c7f93',
+                            overlay1: '#8c8fa1',
+                            overlay0: '#9ca0b0',
+                            surface2: '#acb0be',
+                            surface1: '#bcc0cc',
+                            surface0: '#ccd0da',
+                            base: '#eff1f5',
+                            mantle: '#e6e9ef',
+                            crust: '#dce0e8',
+                        },
+                        // Catppuccin Frappe (Dark Mode)
+                        frappe: {
+                            rosewater: '#f2d5cf',
+                            flamingo: '#eebebe',
+                            pink: '#f4b8e4',
+                            mauve: '#ca9ee6',
+                            red: '#e78284',
+                            maroon: '#ea999c',
+                            peach: '#ef9f76',
+                            yellow: '#e5c890',
+                            green: '#a6d189',
+                            teal: '#81c8be',
+                            sky: '#99d1db',
+                            sapphire: '#85c1dc',
+                            blue: '#8caaee',
+                            lavender: '#babbf1',
+                            text: '#c6d0f5',
+                            subtext1: '#b5bfe2',
+                            subtext0: '#a5adce',
+                            overlay2: '#949cbb',
+                            overlay1: '#838ba7',
+                            overlay0: '#737994',
+                            surface2: '#626880',
+                            surface1: '#51576d',
+                            surface0: '#414559',
+                            base: '#303446',
+                            mantle: '#292c3c',
+                            crust: '#232634',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        /* Modern card styling */
+        .article-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .article-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Relevance score indicators - Catppuccin colors */
+        .score-high { border-left: 4px solid #40a02b; } /* Latte green */
+        .dark .score-high { border-left-color: #a6d189; } /* Frappe green */
+        
+        .score-medium { border-left: 4px solid #df8e1d; } /* Latte yellow */
+        .dark .score-medium { border-left-color: #e5c890; } /* Frappe yellow */
+        
+        .score-low { border-left: 4px solid #9ca0b0; } /* Latte overlay0 */
+        .dark .score-low { border-left-color: #737994; } /* Frappe overlay0 */
+        
+        /* Loading spinner */
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator,
+        .htmx-request.htmx-indicator { display: inline-block; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #e6e9ef; }
+        ::-webkit-scrollbar-thumb { background: #acb0be; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9ca0b0; }
+        .dark ::-webkit-scrollbar-track { background: #292c3c; }
+        .dark ::-webkit-scrollbar-thumb { background: #51576d; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #626880; }
+        
+        /* Focus ring using Catppuccin blue */
+        .focus-ring:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 102, 245, 0.3);
+        }
+        .dark .focus-ring:focus {
+            box-shadow: 0 0 0 3px rgba(140, 170, 238, 0.3);
+        }
+        
+        /* Smooth transitions */
+        * { transition-property: background-color, border-color, color; transition-duration: 150ms; }
+    </style>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-latte-base dark:bg-frappe-base min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-latte-mantle dark:bg-frappe-mantle border-b border-latte-surface0 dark:border-frappe-surface0 sticky top-0 z-40 backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-center items-center h-12">
+                <div class="flex items-center gap-1">
+                    <a href="/" id="nav-articles" class="px-4 py-2 rounded-lg text-sm font-medium text-latte-subtext0 dark:text-frappe-subtext0 hover:text-latte-text dark:hover:text-frappe-text hover:bg-latte-surface0 dark:hover:bg-frappe-surface0 transition-colors">
+                        Articles
+                    </a>
+                    <a href="/feeds" id="nav-feeds" class="px-4 py-2 rounded-lg text-sm font-medium text-latte-subtext0 dark:text-frappe-subtext0 hover:text-latte-text dark:hover:text-frappe-text hover:bg-latte-surface0 dark:hover:bg-frappe-surface0 transition-colors">
+                        Feeds
+                    </a>
+                    <a href="/preferences" id="nav-preferences" class="px-4 py-2 rounded-lg text-sm font-medium text-latte-subtext0 dark:text-frappe-subtext0 hover:text-latte-text dark:hover:text-frappe-text hover:bg-latte-surface0 dark:hover:bg-frappe-surface0 transition-colors">
+                        Preferences
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+    
+    <!-- Scripts -->
+    <script>
+        // Toast notification helper
+        function showToast(message, type = 'info') {
+            const colors = {
+                'success': 'bg-latte-green dark:bg-frappe-green text-white',
+                'error': 'bg-latte-red dark:bg-frappe-red text-white',
+                'info': 'bg-latte-blue dark:bg-frappe-blue text-white'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = `${colors[type]} px-5 py-3 rounded-xl shadow-lg font-medium text-sm backdrop-blur-sm`;
+            toast.textContent = message;
+            
+            document.getElementById('toast-container').appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // HTMX event listeners
+        document.body.addEventListener('htmx:afterRequest', (event) => {
+            if (event.detail.successful) {
+                try {
+                    const response = JSON.parse(event.detail.xhr.response);
+                    if (response.message) showToast(response.message, 'success');
+                } catch (e) {}
+            }
+        });
+        
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+        
+        // Highlight active navigation item based on current page
+        (function() {
+            var path = window.location.pathname;
+            var navItems = {
+                '/': 'nav-articles',
+                '/feeds': 'nav-feeds',
+                '/preferences': 'nav-preferences'
+            };
+            
+            var activeClass = 'bg-latte-surface0 dark:bg-frappe-surface0 text-latte-text dark:text-frappe-text';
+            var inactiveClass = 'text-latte-subtext0 dark:text-frappe-subtext0';
+            
+            // Find which page we're on
+            var activeId = navItems[path];
+            if (activeId) {
+                var element = document.getElementById(activeId);
+                if (element) {
+                    // Remove inactive classes and add active classes
+                    var classes = inactiveClass.split(' ');
+                    classes.forEach(function(cls) {
+                        element.classList.remove(cls);
+                    });
+                    classes = activeClass.split(' ');
+                    classes.forEach(function(cls) {
+                        element.classList.add(cls);
+                    });
+                }
+            }
+        })();
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

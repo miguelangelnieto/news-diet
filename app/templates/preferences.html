@@ -1,0 +1,412 @@
+{% extends "base.html" %}
+
+{% block title %}Preferences - News Diet{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-latte-text dark:text-frappe-text">AI Preferences</h2>
+        <p class="text-latte-subtext0 dark:text-frappe-subtext0 mt-1">Customize how articles are filtered and scored</p>
+    </div>
+    
+    <!-- Preferences Form -->
+    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-xl p-6">
+        <form id="preferences-form" class="space-y-6">
+            <!-- Topics of Interest -->
+            <div>
+                <label for="interests" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
+                    Topics of Interest
+                </label>
+                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
+                    Articles matching these topics will get higher relevance scores. Separate with commas.
+                </p>
+                <textarea 
+                    id="interests" 
+                    name="interests" 
+                    rows="3"
+                    placeholder="Python, DevOps, Machine Learning, Web Development, Open Source"
+                    class="w-full px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors resize-none"
+                >{{ preferences.interests_str }}</textarea>
+            </div>
+            
+            <!-- Topics to Exclude -->
+            <div>
+                <label for="exclude_topics" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
+                    Topics to Exclude
+                </label>
+                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
+                    Articles about these topics will get lower relevance scores. Separate with commas.
+                </p>
+                <textarea 
+                    id="exclude_topics" 
+                    name="exclude_topics" 
+                    rows="3"
+                    placeholder="Cryptocurrency, NFT, Celebrity News"
+                    class="w-full px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors resize-none"
+                >{{ preferences.exclude_topics_str }}</textarea>
+            </div>
+            
+            <!-- Minimum Relevance Score -->
+            <div>
+                <label for="min_relevance_score" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
+                    Minimum Relevance Score (0-10)
+                </label>
+                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
+                    Articles below this score are automatically hidden from your feed (checkmark icon to mark as read).
+                </p>
+                <div class="flex items-center gap-4">
+                    <input 
+                        type="range" 
+                        id="min_relevance_score" 
+                        name="min_relevance_score" 
+                        min="0" 
+                        max="10" 
+                        value="{{ preferences.min_relevance_score }}"
+                        class="flex-1 h-2 bg-latte-surface1 dark:bg-frappe-surface1 rounded-lg appearance-none cursor-pointer accent-latte-blue dark:accent-frappe-blue"
+                        oninput="document.getElementById('score-value').textContent = this.value"
+                    >
+                    <span id="score-value" class="text-2xl font-bold text-latte-text dark:text-frappe-text w-12 text-center tabular-nums">
+                        {{ preferences.min_relevance_score }}
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Dark Mode Toggle -->
+            <div>
+                <label for="dark_mode" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
+                    Theme
+                </label>
+                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
+                    Choose between light and dark color scheme.
+                </p>
+                <div class="flex items-center gap-3">
+                    <input 
+                        type="checkbox" 
+                        id="dark_mode" 
+                        name="dark_mode"
+                        {% if preferences.dark_mode %}checked{% endif %}
+                        class="w-5 h-5 rounded bg-latte-surface1 dark:bg-frappe-surface1 border-latte-overlay0 dark:border-frappe-overlay0 text-latte-blue dark:text-frappe-blue focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue cursor-pointer"
+                    >
+                    <label for="dark_mode" class="text-sm font-medium text-latte-text dark:text-frappe-text cursor-pointer select-none">
+                        Enable dark mode
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Prune After Days -->
+            <div>
+                <label for="prune_after_days" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
+                    Auto-Delete Articles After (Days)
+                </label>
+                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
+                    Automatically delete articles older than this many days. Starred articles are always kept.
+                </p>
+                <div class="flex items-center gap-4">
+                    <input 
+                        type="number" 
+                        id="prune_after_days" 
+                        name="prune_after_days" 
+                        min="1" 
+                        max="365" 
+                        value="{{ preferences.prune_after_days|default(30) }}"
+                        class="w-24 px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors text-center tabular-nums"
+                    >
+                    <span class="text-sm text-latte-subtext0 dark:text-frappe-subtext0">
+                        days (1-365)
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Save Button -->
+            <div class="pt-4">
+                <button 
+                    type="submit"
+                    class="inline-flex items-center gap-2 bg-latte-blue dark:bg-frappe-blue hover:bg-latte-sapphire dark:hover:bg-frappe-sapphire text-white px-6 py-3 rounded-xl font-medium shadow-sm hover:shadow transition-all"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Save Preferences
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Help Section -->
+    <div class="bg-latte-blue/10 dark:bg-frappe-blue/10 border border-latte-blue/20 dark:border-frappe-blue/20 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-latte-blue dark:text-frappe-blue mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            How AI Scoring Works
+        </h3>
+        <div class="text-sm text-latte-text dark:text-frappe-text space-y-3">
+            <p>
+                <strong class="text-latte-subtext1 dark:text-frappe-subtext1">Hybrid Scoring System:</strong> 
+                The AI extracts relevant topic tags from your interests list, then the system calculates a score:
+            </p>
+            <ul class="list-disc list-inside ml-4 space-y-1 text-latte-subtext0 dark:text-frappe-subtext0">
+                <li><strong>0 tags:</strong> Score 1-3 (not relevant)</li>
+                <li><strong>1 tag:</strong> Score 4-6 (moderately relevant)</li>
+                <li><strong>2 tags:</strong> Score 6-8 (highly relevant)</li>
+                <li><strong>3+ tags:</strong> Score 8-10 (exceptional)</li>
+            </ul>
+            <p class="mt-2 text-xs">
+                Quality assessment (low/medium/high) fine-tunes the score within each range.
+            </p>
+            <div class="flex flex-wrap gap-2">
+                <strong class="text-latte-subtext1 dark:text-frappe-subtext1">Color Coding:</strong>
+                <span class="px-2.5 py-1 bg-latte-green/20 dark:bg-frappe-green/20 text-latte-green dark:text-frappe-green text-xs font-medium rounded-lg">Green (8-10)</span>
+                <span class="px-2.5 py-1 bg-latte-yellow/20 dark:bg-frappe-yellow/20 text-latte-yellow dark:text-frappe-yellow text-xs font-medium rounded-lg">Yellow (5-7)</span>
+                <span class="px-2.5 py-1 bg-latte-overlay0/20 dark:bg-frappe-overlay0/20 text-latte-overlay0 dark:text-frappe-overlay0 text-xs font-medium rounded-lg">Gray (0-4)</span>
+            </div>
+            <p>
+                <strong class="text-latte-subtext1 dark:text-frappe-subtext1">Processing Time:</strong> 
+                Since we're using CPU-only inference (no GPU), article processing takes a bit longer. This is normal!
+            </p>
+            <p>
+                <strong class="text-latte-subtext1 dark:text-frappe-subtext1">Model:</strong> 
+                <code class="px-2 py-0.5 bg-latte-surface0 dark:bg-frappe-surface0 rounded text-xs">{{ model_name }}</code> — optimized for CPU-only inference.
+            </p>
+        </div>
+    </div>
+    
+    <!-- Current Settings Summary -->
+    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-latte-text dark:text-frappe-text mb-4">Current Settings Summary</h3>
+        <dl class="space-y-3">
+            <div class="flex justify-between items-center py-2 border-b border-latte-surface0 dark:border-frappe-surface0">
+                <dt class="text-sm font-medium text-latte-subtext0 dark:text-frappe-subtext0">Topics of Interest</dt>
+                <dd class="text-sm text-latte-text dark:text-frappe-text font-medium">
+                    {% if preferences.interests_str %}
+                        {{ preferences.interests_str.split(',') | length }} topic(s)
+                    {% else %}
+                        <span class="text-latte-overlay0 dark:text-frappe-overlay0">Not set</span>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-latte-surface0 dark:border-frappe-surface0">
+                <dt class="text-sm font-medium text-latte-subtext0 dark:text-frappe-subtext0">Topics to Exclude</dt>
+                <dd class="text-sm text-latte-text dark:text-frappe-text font-medium">
+                    {% if preferences.exclude_topics_str %}
+                        {{ preferences.exclude_topics_str.split(',') | length }} topic(s)
+                    {% else %}
+                        <span class="text-latte-overlay0 dark:text-frappe-overlay0">Not set</span>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="flex justify-between items-center py-2">
+                <dt class="text-sm font-medium text-latte-subtext0 dark:text-frappe-subtext0">Minimum Score Threshold</dt>
+                <dd class="text-sm text-latte-text dark:text-frappe-text font-medium">{{ preferences.min_relevance_score }}/10</dd>
+            </div>
+        </dl>
+    </div>
+    
+    <!-- Maintenance Section -->
+    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-latte-text dark:text-frappe-text mb-4">Maintenance</h3>
+        <div class="space-y-4">
+            <!-- Refresh Feeds Button -->
+            <div class="flex items-start gap-4">
+                <button 
+                    id="refresh-btn"
+                    onclick="refreshFeeds()"
+                    class="inline-flex items-center gap-2 bg-latte-blue dark:bg-frappe-blue hover:bg-latte-sapphire dark:hover:bg-frappe-sapphire text-white px-5 py-2.5 rounded-xl font-medium shadow-sm hover:shadow transition-all focus-ring"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <span>Refresh Feeds</span>
+                </button>
+                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 pt-2.5">
+                    Fetch new articles from all enabled RSS feeds
+                </p>
+            </div>
+            
+            <!-- Divider -->
+            <div class="border-t border-latte-surface0 dark:border-frappe-surface0 my-4"></div>
+            
+            <!-- Dangerous Actions Warning -->
+            <div class="bg-latte-red/10 dark:bg-frappe-red/10 border border-latte-red/20 dark:border-frappe-red/20 rounded-xl p-4 mb-4">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-latte-red dark:text-frappe-red shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <div>
+                        <p class="text-sm font-semibold text-latte-red dark:text-frappe-red">Dangerous Actions</p>
+                        <p class="text-xs text-latte-subtext0 dark:text-frappe-subtext0 mt-1">These actions are irreversible. You will be asked to confirm before proceeding.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Delete All Posts Button -->
+            <div class="flex items-start gap-4">
+                <button 
+                    id="delete-all-btn"
+                    onclick="deleteAllArticles()"
+                    class="inline-flex items-center gap-2 bg-latte-red dark:bg-frappe-red hover:bg-latte-maroon dark:hover:bg-frappe-maroon text-white px-5 py-2.5 rounded-xl font-medium shadow-sm hover:shadow transition-all focus-ring"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    <span>Delete All Posts</span>
+                </button>
+                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 pt-2.5">
+                    Permanently delete all articles from the database
+                </p>
+            </div>
+            
+            <!-- Recalculate Scores Button -->
+            <div class="flex items-start gap-4">
+                <button 
+                    id="recalculate-btn"
+                    onclick="recalculateScores()"
+                    class="inline-flex items-center gap-2 bg-latte-red dark:bg-frappe-red hover:bg-latte-maroon dark:hover:bg-frappe-maroon text-white px-5 py-2.5 rounded-xl font-medium shadow-sm hover:shadow transition-all focus-ring"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>Recalculate All Scores</span>
+                </button>
+                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 pt-2.5">
+                    Reprocess all articles with AI to update scores and tags
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle preferences form submission
+    document.getElementById('preferences-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        
+        // Parse comma-separated strings into arrays
+        const interests = formData.get('interests')
+            .split(',')
+            .map(t => t.trim())
+            .filter(t => t);
+        
+        const exclude_topics = formData.get('exclude_topics')
+            .split(',')
+            .map(t => t.trim())
+            .filter(t => t);
+        
+        const data = {
+            interests: interests,
+            exclude_topics: exclude_topics,
+            min_relevance_score: parseInt(formData.get('min_relevance_score')),
+            dark_mode: document.getElementById('dark_mode').checked,
+            prune_after_days: parseInt(formData.get('prune_after_days'))
+        };
+        
+        try {
+            const response = await fetch('/api/preferences', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                showToast('Preferences saved successfully!', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast('Failed to save preferences', 'error');
+            }
+        } catch (error) {
+            showToast('Error saving preferences', 'error');
+            console.error('Error:', error);
+        }
+    });
+    
+    // Refresh feeds
+    async function refreshFeeds() {
+        const btn = document.getElementById('refresh-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Refreshing...</span>';
+        
+        try {
+            const response = await fetch('/api/articles/refresh', { method: 'POST' });
+            const result = await response.json();
+            
+            if (response.ok) {
+                showToast(result.message || 'Feeds refreshed successfully!', 'success');
+            } else {
+                showToast('Failed to refresh feeds', 'error');
+            }
+        } catch (error) {
+            showToast('Error refreshing feeds', 'error');
+            console.error('Error:', error);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg><span>Refresh Feeds</span>';
+        }
+    }
+    
+    // Delete all articles
+    async function deleteAllArticles() {
+        const confirmed = confirm('⚠️ WARNING: This will permanently delete ALL articles from the database.\n\nThis action cannot be undone.\n\nAre you absolutely sure you want to continue?');
+        
+        if (!confirmed) return;
+        
+        // Double confirmation for dangerous action
+        const doubleConfirm = confirm('This is your final warning.\n\nClick OK to DELETE ALL ARTICLES permanently.');
+        
+        if (!doubleConfirm) return;
+        
+        const btn = document.getElementById('delete-all-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Deleting...</span>';
+        
+        try {
+            const response = await fetch('/api/articles', { method: 'DELETE' });
+            const result = await response.json();
+            
+            if (response.ok) {
+                showToast(result.message || 'All articles deleted successfully', 'success');
+            } else {
+                showToast('Failed to delete articles', 'error');
+            }
+        } catch (error) {
+            showToast('Error deleting articles', 'error');
+            console.error('Error:', error);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg><span>Delete All Posts</span>';
+        }
+    }
+    
+    // Recalculate all scores
+    async function recalculateScores() {
+        const confirmed = confirm('⚠️ WARNING: This will recalculate relevance scores and tags for ALL articles using AI.\n\nThis process can take a very long time (several minutes or hours depending on the number of articles).\n\nThe page may appear unresponsive during processing.\n\nAre you sure you want to continue?');
+        
+        if (!confirmed) return;
+        
+        const btn = document.getElementById('recalculate-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Processing...</span>';
+        
+        showToast('Recalculating scores... This may take several minutes.', 'info');
+        
+        try {
+            const response = await fetch('/api/articles/recalculate', { method: 'POST' });
+            const result = await response.json();
+            
+            if (response.ok) {
+                showToast(result.message || 'Scores recalculated successfully!', 'success');
+            } else {
+                showToast('Failed to recalculate scores', 'error');
+            }
+        } catch (error) {
+            showToast('Error recalculating scores', 'error');
+            console.error('Error:', error);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg><span>Recalculate All Scores</span>';
+        }
+    }
+</script>
+{% endblock %}
