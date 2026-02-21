@@ -164,8 +164,8 @@ async def dashboard(request: Request, show_all: bool = False, filter_unread: boo
     # Get starred count
     starred_count = await db.articles.count_documents({"is_starred": True})
     
-    # Get total articles count (for "All" view indicator)
-    total_count = await db.articles.count_documents({})
+    # Get total articles count (fast estimated count for "All" view indicator)
+    total_count = await db.articles.estimated_document_count()
     
     return templates.TemplateResponse(
         "index.html",
@@ -510,18 +510,14 @@ async def recalculate_all_scores():
             dark_mode=prefs_doc.get("dark_mode", False)
         )
         
-        # Get all articles
+        # Get all articles using a cursor to avoid loading all into memory
         cursor = db.articles.find({})
-        articles = await cursor.to_list(length=None)
         
-        if not articles:
-            return {"success": True, "processed_count": 0, "message": "No articles to process"}
-        
-        # Process articles with proper error handling
+        # Process articles one by one with proper error handling
         from app.services.ai_processor import ai_processor
         
         processed = 0
-        for article in articles:
+        async for article in cursor:
             try:
                 # Use the process_article method which handles both summary and scoring
                 result = await ai_processor.process_article(
@@ -530,13 +526,17 @@ async def recalculate_all_scores():
                     preferences
                 )
                 
+                # Determine if article should be hidden based on new relevance score
+                is_hidden = result["relevance_score"] < preferences.min_relevance_score if result["relevance_score"] is not None else False
+                
                 # Update article with new data
                 await db.articles.update_one(
                     {"_id": article["_id"]},
                     {"$set": {
                         "summary": result["summary"],
                         "tags": result["tags"],
-                        "relevance_score": result["relevance_score"]
+                        "relevance_score": result["relevance_score"],
+                        "is_hidden": is_hidden
                     }}
                 )
                 processed += 1

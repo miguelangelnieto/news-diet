@@ -42,18 +42,32 @@ async def create_indexes() -> None:
     
     # Articles collection indexes
     # CRITICAL: Unique index on URL prevents duplicate articles across all feeds
-    # This is the second layer of deduplication (see feeder.py for full strategy)
     await db.articles.create_index("url", unique=True)
-    await db.articles.create_index([("published_at", -1)])
-    await db.articles.create_index([("is_read", 1), ("published_at", -1)])
-    await db.articles.create_index([("relevance_score", -1)])
+    
+    # Combined indexes for dashboard filtering and sorting
+    # Default view: filter by unread + relevance score, sort by date
+    await db.articles.create_index([("is_read", 1), ("published_at", -1), ("relevance_score", -1)])
+    
+    # Count unread articles: filter by unread + relevance score (no sort)
+    await db.articles.create_index([("is_read", 1), ("relevance_score", -1)])
+    
+    # Starred view: filter by starred, sort by date
     await db.articles.create_index([("is_starred", 1), ("published_at", -1)])
-    await db.articles.create_index([("is_hidden", 1), ("published_at", -1)])
+    
+    # Sorting by date only (All view)
+    await db.articles.create_index([("published_at", -1)])
+    
+    # For cleanup task: old unstarred articles
+    await db.articles.create_index([("is_starred", 1), ("published_at", 1)])
+    
+    # Other useful indexes
     await db.articles.create_index("source")
+    await db.articles.create_index([("is_hidden", 1), ("published_at", -1)])
     
     # Feeds collection indexes
     await db.feeds.create_index("url", unique=True)
     await db.feeds.create_index("enabled")
+    await db.feeds.create_index("name")
     
     logger.info("Database indexes created successfully")
 
