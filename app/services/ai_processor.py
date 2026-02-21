@@ -153,8 +153,7 @@ Content: {content[:800]}
 IMPORTANT:
 - Only tag topics that are a PRIMARY focus of the article
 - If article is about excluded topics, return EXCLUDED
-- Return 0-3 tags maximum
-- Most articles should have 0-1 tags
+- Return 0 to 4 tags maximum
 
 Format:
 Tags: [tag1, tag2] OR Tags: [] OR Tags: EXCLUDED
