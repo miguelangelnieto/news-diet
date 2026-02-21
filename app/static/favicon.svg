@@ -1,24 +1,25 @@
-<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background circle -->
-  <circle cx="16" cy="16" r="16" fill="#1e66f5"/>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fav-g" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8839ef"/>
+      <stop offset="1" stop-color="#1e66f5"/>
+    </linearGradient>
+  </defs>
   
-  <!-- Newspaper icon -->
-  <rect x="8" y="8" width="16" height="16" rx="2" fill="white" opacity="0.95"/>
+  <!-- Background -->
+  <rect width="32" height="32" rx="8" fill="url(#fav-g)"/>
   
-  <!-- Header bar -->
-  <rect x="9" y="9" width="14" height="3" rx="1" fill="#1e66f5" opacity="0.8"/>
+  <!-- Paper -->
+  <rect x="6" y="5" width="20" height="22" rx="3" fill="white"/>
   
-  <!-- Article lines -->
-  <rect x="9" y="14" width="6" height="1.5" rx="0.5" fill="#4c4f69" opacity="0.6"/>
-  <rect x="9" y="16.5" width="6" height="1.5" rx="0.5" fill="#4c4f69" opacity="0.4"/>
+  <!-- Headline -->
+  <rect x="8" y="8" width="12" height="3" rx="1" fill="#1e66f5"/>
   
-  <rect x="17" y="14" width="6" height="1.5" rx="0.5" fill="#4c4f69" opacity="0.6"/>
-  <rect x="17" y="16.5" width="6" height="1.5" rx="0.5" fill="#4c4f69" opacity="0.4"/>
+  <!-- Lines -->
+  <rect x="8" y="13" width="14" height="1.5" rx="0.5" fill="#6c6f85" fill-opacity="0.3"/>
+  <rect x="8" y="16" width="14" height="1.5" rx="0.5" fill="#6c6f85" fill-opacity="0.2"/>
+  <rect x="8" y="19" width="10" height="1.5" rx="0.5" fill="#6c6f85" fill-opacity="0.15"/>
   
-  <rect x="9" y="19" width="6" height="1.5" rx="0.5" fill="#4c4f69" opacity="0.6"/>
-  <rect x="17" y="19" width="6" height="1.5" rx="0.5" fill="#4c4f69" opacity="0.6"/>
-  
-  <!-- AI sparkle -->
-  <circle cx="24" cy="24" r="3" fill="#40a02b" opacity="0.9"/>
-  <circle cx="24" cy="24" r="1.5" fill="white"/>
+  <!-- Small AI Sparkle -->
+  <path d="M26 20L27 23L30 24L27 25L26 28L25 25L22 24L25 23L26 20Z" fill="#40a02b"/>
 </svg>

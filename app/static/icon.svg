@@ -1,47 +1,37 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background circle with gradient -->
   <defs>
-    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1e66f5;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#8839ef;stop-opacity:1" />
+    <linearGradient id="g" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8839ef"/>
+      <stop offset="1" stop-color="#1e66f5"/>
     </linearGradient>
   </defs>
   
-  <!-- Rounded square background -->
-  <rect width="512" height="512" rx="96" fill="url(#gradient)"/>
+  <!-- Background -->
+  <rect width="512" height="512" rx="128" fill="url(#g)"/>
   
-  <!-- Newspaper icon -->
-  <g transform="translate(128, 128)">
-    <!-- Main newspaper body -->
-    <rect x="0" y="0" width="256" height="256" rx="16" fill="white" opacity="0.95"/>
-    
-    <!-- Top headline bar -->
-    <rect x="20" y="20" width="216" height="40" rx="8" fill="#1e66f5" opacity="0.8"/>
-    
-    <!-- Article columns -->
-    <rect x="20" y="80" width="96" height="12" rx="4" fill="#4c4f69" opacity="0.6"/>
-    <rect x="20" y="100" width="96" height="12" rx="4" fill="#4c4f69" opacity="0.4"/>
-    <rect x="20" y="120" width="80" height="12" rx="4" fill="#4c4f69" opacity="0.4"/>
-    
-    <rect x="140" y="80" width="96" height="12" rx="4" fill="#4c4f69" opacity="0.6"/>
-    <rect x="140" y="100" width="96" height="12" rx="4" fill="#4c4f69" opacity="0.4"/>
-    <rect x="140" y="120" width="80" height="12" rx="4" fill="#4c4f69" opacity="0.4"/>
-    
-    <!-- Second section -->
-    <rect x="20" y="160" width="96" height="12" rx="4" fill="#4c4f69" opacity="0.6"/>
-    <rect x="20" y="180" width="96" height="12" rx="4" fill="#4c4f69" opacity="0.4"/>
-    <rect x="20" y="200" width="80" height="12" rx="4" fill="#4c4f69" opacity="0.4"/>
-    
-    <rect x="140" y="160" width="96" height="12" rx="4" fill="#4c4f69" opacity="0.6"/>
-    <rect x="140" y="180" width="96" height="12" rx="4" fill="#4c4f69" opacity="0.4"/>
-    <rect x="140" y="200" width="80" height="12" rx="4" fill="#4c4f69" opacity="0.4"/>
-  </g>
+  <!-- Subtle Shadow for Paper -->
+  <rect x="125" y="95" width="282" height="302" rx="28" fill="black" fill-opacity="0.1"/>
   
-  <!-- AI sparkle overlay -->
-  <g transform="translate(340, 360)">
-    <!-- Sparkle star -->
-    <path d="M 0,-20 L 5,-5 L 20,0 L 5,5 L 0,20 L -5,5 L -20,0 L -5,-5 Z" fill="#40a02b" opacity="0.9"/>
-    <path d="M 30,-10 L 33,-3 L 40,0 L 33,3 L 30,10 L 27,3 L 20,0 L 27,-3 Z" fill="#40a02b" opacity="0.7"/>
-    <path d="M -30,10 L -27,15 L -22,18 L -27,21 L -30,26 L -33,21 L -38,18 L -33,15 Z" fill="#40a02b" opacity="0.7"/>
-  </g>
+  <!-- Main Paper Body -->
+  <rect x="110" y="80" width="282" height="302" rx="24" fill="white"/>
+  
+  <!-- Folded Corner Detail -->
+  <path d="M342 80L392 130V104C392 90.7452 381.255 80 368 80H342Z" fill="#ccd0da"/>
+  
+  <!-- Newspaper Headline -->
+  <rect x="140" y="125" width="180" height="30" rx="8" fill="#1e66f5"/>
+  
+  <!-- Content Bars -->
+  <rect x="140" y="180" width="222" height="12" rx="6" fill="#6c6f85" fill-opacity="0.3"/>
+  <rect x="140" y="210" width="222" height="12" rx="6" fill="#6c6f85" fill-opacity="0.2"/>
+  <rect x="140" y="240" width="160" height="12" rx="6" fill="#6c6f85" fill-opacity="0.15"/>
+  
+  <!-- More Bars -->
+  <rect x="140" y="285" width="105" height="12" rx="6" fill="#6c6f85" fill-opacity="0.2"/>
+  <rect x="257" y="285" width="105" height="12" rx="6" fill="#6c6f85" fill-opacity="0.2"/>
+  <rect x="140" y="315" width="222" height="12" rx="6" fill="#6c6f85" fill-opacity="0.15"/>
+  
+  <!-- AI Sparkles (Catppuccin Green for 'Diet/Healthy') -->
+  <path d="M420 330L434 365L470 375L434 385L420 420L406 385L370 375L406 365L420 330Z" fill="#40a02b"/>
+  <path d="M465 295L471 310L485 315L471 320L465 335L459 320L445 315L459 310L465 295Z" fill="#40a02b" fill-opacity="0.7"/>
 </svg>
