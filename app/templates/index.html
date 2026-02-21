@@ -37,32 +37,34 @@
     </div>
     
     <!-- Tabs-style Filters -->
-    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-2xl p-1.5 shadow-inner-sm overflow-x-auto no-scrollbar">
-        <div class="flex items-center min-w-max gap-1">
-            <a href="/" 
-               id="tab-relevant"
-               class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 {% if not show_all and not filter_unread and not filter_starred %}bg-white dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-md scale-[1.02]{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 hover:text-latte-text dark:hover:text-frappe-text{% endif %}">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
-                Relevant ({{ min_relevance_score }}+)
-            </a>
-            <a href="/?show_all=true" 
-               id="tab-all"
-               class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 {% if show_all %}bg-white dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-md scale-[1.02]{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 hover:text-latte-text dark:hover:text-frappe-text{% endif %}">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
-                All Posts
-            </a>
-            <a href="/?filter_unread=true" 
-               id="tab-unread"
-               class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 {% if filter_unread %}bg-white dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-md scale-[1.02]{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 hover:text-latte-text dark:hover:text-frappe-text{% endif %}">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                Unread
-            </a>
-            <a href="/?filter_starred=true" 
-               id="tab-starred"
-               class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 {% if filter_starred %}bg-white dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-md scale-[1.02]{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 hover:text-latte-text dark:hover:text-frappe-text{% endif %}">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
-                Starred
-            </a>
+    <div class="sticky top-0 z-30 py-3 -mx-4 px-4 bg-latte-base/90 dark:bg-frappe-base/90 backdrop-blur-lg sm:relative sm:top-auto sm:z-auto sm:p-0 sm:bg-transparent sm:backdrop-blur-none transition-all duration-300">
+        <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-2xl p-1.5 shadow-inner-sm ring-1 ring-latte-surface0/50 dark:ring-frappe-surface0/50">
+            <div class="grid grid-cols-2 sm:flex sm:items-center gap-1.5 sm:gap-1">
+                <a href="/" 
+                   id="tab-relevant"
+                   class="flex items-center justify-center sm:justify-start gap-2 px-3 sm:px-5 py-3 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 {% if not show_all and not filter_unread and not filter_starred %}bg-white dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-md sm:scale-[1.02]{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 hover:text-latte-text dark:hover:text-frappe-text{% endif %}">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
+                    <span class="truncate">Relevant ({{ min_relevance_score }}+)</span>
+                </a>
+                <a href="/?show_all=true" 
+                   id="tab-all"
+                   class="flex items-center justify-center sm:justify-start gap-2 px-3 sm:px-5 py-3 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 {% if show_all %}bg-white dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-md sm:scale-[1.02]{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 hover:text-latte-text dark:hover:text-frappe-text{% endif %}">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+                    <span class="truncate">All Posts</span>
+                </a>
+                <a href="/?filter_unread=true" 
+                   id="tab-unread"
+                   class="flex items-center justify-center sm:justify-start gap-2 px-3 sm:px-5 py-3 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 {% if filter_unread %}bg-white dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-md sm:scale-[1.02]{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 hover:text-latte-text dark:hover:text-frappe-text{% endif %}">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    <span class="truncate">Unread</span>
+                </a>
+                <a href="/?filter_starred=true" 
+                   id="tab-starred"
+                   class="flex items-center justify-center sm:justify-start gap-2 px-3 sm:px-5 py-3 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 {% if filter_starred %}bg-white dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-md sm:scale-[1.02]{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 hover:text-latte-text dark:hover:text-frappe-text{% endif %}">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+                    <span class="truncate">Starred</span>
+                </a>
+            </div>
         </div>
     </div>
     
