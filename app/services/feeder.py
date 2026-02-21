@@ -1,7 +1,10 @@
 import feedparser
+import ipaddress
 import logging
 import httpx
+import trafilatura
 from datetime import datetime, timezone
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from pymongo.errors import DuplicateKeyError
 from app.database import get_database
@@ -14,6 +17,16 @@ logger = logging.getLogger(__name__)
 # Constants
 FEED_FETCH_TIMEOUT = 30  # seconds
 
+# Tags and attributes allowed in sanitized article HTML
+_ALLOWED_TAGS = {
+    'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'ul', 'ol', 'li', 'a', 'strong', 'em', 'b', 'i',
+    'blockquote', 'pre', 'code', 'br',
+}
+_ALLOWED_ATTRS: dict[str, list[str]] = {'a': ['href']}
+# Tags whose content should be dropped entirely (never just unwrapped)
+_DANGEROUS_TAGS = {'script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'meta', 'link'}
+
 
 class RSSFeeder:
     def __init__(self):
@@ -23,6 +36,54 @@ class RSSFeeder:
         if self.db is None:
             self.db = get_database()
     
+    @staticmethod
+    def _is_safe_url(url: str) -> bool:
+        """Return True only for public http/https URLs (SSRF prevention)."""
+        try:
+            parsed = urlparse(url)
+            if parsed.scheme not in ('http', 'https'):
+                return False
+            hostname = parsed.hostname
+            if not hostname:
+                return False
+            # Block well-known internal hostnames
+            if hostname == 'localhost' or hostname.endswith('.local'):
+                return False
+            # If the hostname is a bare IP address, check for private ranges
+            try:
+                ip = ipaddress.ip_address(hostname)
+                if (ip.is_private or ip.is_loopback
+                        or ip.is_link_local or ip.is_reserved
+                        or ip.is_multicast):
+                    return False
+            except ValueError:
+                pass  # Not an IP literal – hostname-based checks above are sufficient
+            return True
+        except Exception:
+            return False
+
+    @staticmethod
+    def _sanitize_html(html: str) -> str:
+        """Strip unsafe tags/attrs from extracted article HTML (XSS prevention)."""
+        if not html:
+            return ""
+        soup = BeautifulSoup(html, 'html.parser')
+        for tag in soup.find_all(True):
+            if tag.name in _DANGEROUS_TAGS:
+                tag.decompose()
+            elif tag.name not in _ALLOWED_TAGS:
+                tag.unwrap()
+            else:
+                allowed = _ALLOWED_ATTRS.get(tag.name, [])
+                for attr in list(tag.attrs.keys()):
+                    if attr not in allowed:
+                        del tag[attr]
+                # Ensure link hrefs point only to safe public URLs
+                if tag.name == 'a' and 'href' in tag.attrs:
+                    if not RSSFeeder._is_safe_url(tag['href']):
+                        del tag['href']
+        return str(soup)
+
     @staticmethod
     def _clean_html(html_content: str) -> str:
         if not html_content:
@@ -53,6 +114,29 @@ class RSSFeeder:
             return None
         except httpx.RequestError as e:
             logger.warning(f"Request error fetching feed {feed_url}: {e}")
+            return None
+    
+    async def fetch_full_content(self, url: str) -> str | None:
+        """Fetch and extract clean HTML from the full article URL (on-demand)."""
+        if not self._is_safe_url(url):
+            logger.warning(f"Blocked unsafe URL for full content fetch: {url}")
+            return None
+        try:
+            async with httpx.AsyncClient(timeout=FEED_FETCH_TIMEOUT) as client:
+                response = await client.get(url, follow_redirects=True)
+                response.raise_for_status()
+                
+                downloaded = response.text
+                result = trafilatura.extract(
+                    downloaded,
+                    include_links=True,
+                    include_images=False,
+                    include_comments=False,
+                    output_format='html'
+                )
+                return self._sanitize_html(result) if result else None
+        except Exception as e:
+            logger.warning(f"Error extracting full content from {url}: {e}")
             return None
     
     async def fetch_feed(self, feed_url: str, feed_name: str) -> int:

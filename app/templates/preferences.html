@@ -6,128 +6,158 @@
 <div class="space-y-6">
     <!-- Header -->
     <div>
-        <h2 class="text-2xl sm:text-3xl font-bold text-latte-text dark:text-frappe-text">AI Preferences</h2>
-        <p class="text-latte-subtext0 dark:text-frappe-subtext0 mt-1">Customize how articles are filtered and scored</p>
+        <h2 class="text-2xl sm:text-3xl font-bold text-latte-text dark:text-frappe-text">General Preferences</h2>
+        <p class="text-latte-subtext0 dark:text-frappe-subtext0 mt-1">Customize how your news feed looks and behaves</p>
     </div>
     
     <!-- Preferences Form -->
     <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-xl p-6">
-        <form id="preferences-form" class="space-y-6">
-            <!-- Topics of Interest -->
-            <div>
-                <label for="interests" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
-                    Topics of Interest
-                </label>
-                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
-                    Articles matching these topics will get higher relevance scores. Separate with commas.
-                </p>
-                <textarea 
-                    id="interests" 
-                    name="interests" 
-                    rows="3"
-                    placeholder="Python, DevOps, Machine Learning, Web Development, Open Source"
-                    class="w-full px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors resize-none"
-                >{{ preferences.interests_str }}</textarea>
-            </div>
-            
-            <!-- Topics to Exclude -->
-            <div>
-                <label for="exclude_topics" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
-                    Topics to Exclude
-                </label>
-                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
-                    Articles about these topics will get lower relevance scores. Separate with commas.
-                </p>
-                <textarea 
-                    id="exclude_topics" 
-                    name="exclude_topics" 
-                    rows="3"
-                    placeholder="Cryptocurrency, NFT, Celebrity News"
-                    class="w-full px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors resize-none"
-                >{{ preferences.exclude_topics_str }}</textarea>
-            </div>
-            
-            <!-- Minimum Relevance Score -->
-            <div>
-                <label for="min_relevance_score" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
-                    Minimum Relevance Score (0-10)
-                </label>
-                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
-                    Articles below this score are automatically hidden from your feed (checkmark icon to mark as read).
-                </p>
-                <div class="flex items-center gap-4">
-                    <input 
-                        type="range" 
-                        id="min_relevance_score" 
-                        name="min_relevance_score" 
-                        min="0" 
-                        max="10" 
-                        value="{{ preferences.min_relevance_score }}"
-                        class="flex-1 h-2 bg-latte-surface1 dark:bg-frappe-surface1 rounded-lg appearance-none cursor-pointer accent-latte-blue dark:accent-frappe-blue"
-                        oninput="document.getElementById('score-value').textContent = this.value"
-                    >
-                    <span id="score-value" class="text-2xl font-bold text-latte-text dark:text-frappe-text w-12 text-center tabular-nums">
-                        {{ preferences.min_relevance_score }}
-                    </span>
+        <form id="preferences-form" class="space-y-8">
+            <!-- SECTION: AI Content Filtering -->
+            <div class="space-y-6">
+                <div class="flex items-center gap-2 pb-2 border-b border-latte-surface0 dark:border-frappe-surface0">
+                    <svg class="w-5 h-5 text-latte-blue dark:text-frappe-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    <h3 class="text-lg font-bold text-latte-text dark:text-frappe-text">AI Content Filtering</h3>
                 </div>
-            </div>
-            
-            <!-- Dark Mode Toggle -->
-            <div>
-                <label for="dark_mode" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
-                    Theme
-                </label>
-                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
-                    Choose between light and dark color scheme.
-                </p>
-                <div class="flex items-center gap-3">
-                    <input 
-                        type="checkbox" 
-                        id="dark_mode" 
-                        name="dark_mode"
-                        {% if preferences.dark_mode %}checked{% endif %}
-                        class="w-5 h-5 rounded bg-latte-surface1 dark:bg-frappe-surface1 border-latte-overlay0 dark:border-frappe-overlay0 text-latte-blue dark:text-frappe-blue focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue cursor-pointer"
-                    >
-                    <label for="dark_mode" class="text-sm font-medium text-latte-text dark:text-frappe-text cursor-pointer select-none">
-                        Enable dark mode
+
+                <!-- Topics of Interest -->
+                <div>
+                    <label for="interests" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
+                        Topics of Interest
                     </label>
+                    <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
+                        Articles matching these topics will get higher relevance scores. Separate with commas.
+                    </p>
+                    <textarea 
+                        id="interests" 
+                        name="interests" 
+                        rows="3"
+                        placeholder="Python, DevOps, Machine Learning, Web Development, Open Source"
+                        class="w-full px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors resize-none"
+                    >{{ preferences.interests_str }}</textarea>
+                </div>
+                
+                <!-- Topics to Exclude -->
+                <div>
+                    <label for="exclude_topics" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
+                        Topics to Exclude
+                    </label>
+                    <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
+                        Articles about these topics will get lower relevance scores. Separate with commas.
+                    </p>
+                    <textarea 
+                        id="exclude_topics" 
+                        name="exclude_topics" 
+                        rows="3"
+                        placeholder="Cryptocurrency, NFT, Celebrity News"
+                        class="w-full px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors resize-none"
+                    >{{ preferences.exclude_topics_str }}</textarea>
+                </div>
+                
+                <!-- Minimum Relevance Score -->
+                <div>
+                    <label for="min_relevance_score" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
+                        Minimum Relevance Score (0-10)
+                    </label>
+                    <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
+                        Articles below this score are automatically hidden from your feed.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <input 
+                            type="range" 
+                            id="min_relevance_score" 
+                            name="min_relevance_score" 
+                            min="0" 
+                            max="10" 
+                            value="{{ preferences.min_relevance_score }}"
+                            class="flex-1 h-2 bg-latte-surface1 dark:bg-frappe-surface1 rounded-lg appearance-none cursor-pointer accent-latte-blue dark:accent-frappe-blue"
+                            oninput="document.getElementById('score-value').textContent = this.value"
+                        >
+                        <span id="score-value" class="text-2xl font-bold text-latte-text dark:text-frappe-text w-12 text-center tabular-nums">
+                            {{ preferences.min_relevance_score }}
+                        </span>
+                    </div>
                 </div>
             </div>
-            
-            <!-- Prune After Days -->
-            <div>
-                <label for="prune_after_days" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
-                    Auto-Delete Articles After (Days)
-                </label>
-                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
-                    Automatically delete articles older than this many days. Starred articles are always kept.
-                </p>
-                <div class="flex items-center gap-4">
-                    <input 
-                        type="number" 
-                        id="prune_after_days" 
-                        name="prune_after_days" 
-                        min="1" 
-                        max="365" 
-                        value="{{ preferences.prune_after_days|default(30) }}"
-                        class="w-24 px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors text-center tabular-nums"
-                    >
-                    <span class="text-sm text-latte-subtext0 dark:text-frappe-subtext0">
-                        days (1-365)
-                    </span>
+
+            <!-- SECTION: Appearance -->
+            <div class="space-y-6 pt-4">
+                <div class="flex items-center gap-2 pb-2 border-b border-latte-surface0 dark:border-frappe-surface0">
+                    <svg class="w-5 h-5 text-latte-blue dark:text-frappe-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                    </svg>
+                    <h3 class="text-lg font-bold text-latte-text dark:text-frappe-text">Appearance</h3>
+                </div>
+
+                <!-- Dark Mode Toggle -->
+                <div>
+                    <label for="dark_mode" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
+                        Theme
+                    </label>
+                    <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
+                        Choose between light and dark color scheme.
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <input 
+                            type="checkbox" 
+                            id="dark_mode" 
+                            name="dark_mode"
+                            {% if preferences.dark_mode %}checked{% endif %}
+                            class="w-5 h-5 rounded bg-latte-surface1 dark:bg-frappe-surface1 border-latte-overlay0 dark:border-frappe-overlay0 text-latte-blue dark:text-frappe-blue focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue cursor-pointer"
+                        >
+                        <label for="dark_mode" class="text-sm font-medium text-latte-text dark:text-frappe-text cursor-pointer select-none">
+                            Enable dark mode
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: Data Management -->
+            <div class="space-y-6 pt-4">
+                <div class="flex items-center gap-2 pb-2 border-b border-latte-surface0 dark:border-frappe-surface0">
+                    <svg class="w-5 h-5 text-latte-blue dark:text-frappe-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    <h3 class="text-lg font-bold text-latte-text dark:text-frappe-text">Data Management</h3>
+                </div>
+
+                <!-- Prune After Days -->
+                <div>
+                    <label for="prune_after_days" class="block text-sm font-semibold text-latte-text dark:text-frappe-text mb-2">
+                        Auto-Delete Articles After (Days)
+                    </label>
+                    <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mb-3">
+                        Automatically delete articles older than this many days. Starred articles are always kept.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <input 
+                            type="number" 
+                            id="prune_after_days" 
+                            name="prune_after_days" 
+                            min="1" 
+                            max="365" 
+                            value="{{ preferences.prune_after_days|default(30) }}"
+                            class="w-24 px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors text-center tabular-nums"
+                        >
+                        <span class="text-sm text-latte-subtext0 dark:text-frappe-subtext0">
+                            days (1-365)
+                        </span>
+                    </div>
                 </div>
             </div>
             
             <!-- Save Button -->
-            <div class="pt-4">
+            <div class="pt-6 border-t border-latte-surface0 dark:border-frappe-surface0">
                 <button 
                     type="submit"
-                    class="inline-flex items-center gap-2 bg-latte-blue dark:bg-frappe-blue hover:bg-latte-sapphire dark:hover:bg-frappe-sapphire text-white px-6 py-3 rounded-xl font-medium shadow-sm hover:shadow transition-all"
+                    class="inline-flex items-center gap-2 bg-latte-blue dark:bg-frappe-blue hover:bg-latte-sapphire dark:hover:bg-frappe-sapphire text-white px-8 py-3.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all"
                 >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
-                    Save Preferences
+                    Save All Preferences
                 </button>
             </div>
         </form>

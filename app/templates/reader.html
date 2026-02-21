@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }} - Reader Mode{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Reader content specific styles to ensure it looks good with Catppuccin */
+    .reader-content {
+        line-height: 1.8;
+        font-size: 1.125rem;
+    }
+    .reader-content p {
+        margin-bottom: 1.5rem;
+    }
+    .reader-content h1, .reader-content h2, .reader-content h3 {
+        font-weight: 700;
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+        color: #4c4f69; /* Latte text */
+    }
+    .dark .reader-content h1, .dark .reader-content h2, .dark .reader-content h3 {
+        color: #c6d0f5; /* Frappe text */
+    }
+    .reader-content a {
+        color: #1e66f5; /* Latte blue */
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+    .dark .reader-content a {
+        color: #8caaee; /* Frappe blue */
+    }
+    .reader-content ul, .reader-content ol {
+        margin-bottom: 1.5rem;
+        padding-left: 1.5rem;
+    }
+    .reader-content li {
+        margin-bottom: 0.5rem;
+    }
+    .reader-content blockquote {
+        border-left: 4px solid #ccd0da;
+        padding-left: 1.5rem;
+        font-style: italic;
+        color: #6c6f85;
+        margin: 2rem 0;
+    }
+    .dark .reader-content blockquote {
+        border-left-color: #414559;
+        color: #a5adce;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-8 pb-12">
+    <!-- Navigation Back -->
+    <div class="flex items-center justify-between">
+        <a href="/" class="inline-flex items-center gap-2 text-latte-blue dark:text-frappe-blue font-bold hover:underline">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Feed
+        </a>
+    </div>
+
+    <!-- Article Header -->
+    <header class="space-y-4">
+        <div class="flex items-center gap-3">
+            <span class="px-3 py-1 bg-latte-blue/10 dark:bg-frappe-blue/10 text-latte-blue dark:text-frappe-blue text-xs font-black uppercase tracking-wider rounded-lg">
+                {{ article.source }}
+            </span>
+            <span class="text-sm text-latte-overlay0 dark:text-frappe-overlay0 tabular-nums">
+                {{ article.published_at.strftime('%B %d, %Y') }}
+            </span>
+            {% if reading_time > 0 %}
+            <span class="text-latte-overlay0 dark:text-frappe-overlay0">•</span>
+            <span class="flex items-center gap-1 text-sm text-latte-overlay0 dark:text-frappe-overlay0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {{ reading_time }} min read
+            </span>
+            {% endif %}
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-black text-latte-text dark:text-frappe-text leading-tight">
+            {{ article.title }}
+        </h1>
+        {% set article_url = article.url or '' %}
+        {% set hostname = article_url %}
+        {% if '//' in article_url %}
+        {% set after_scheme = article_url.split('//')[1] %}
+        {% set hostname = after_scheme.split('/')[0] %}
+        {% elif '/' in article_url %}
+        {% set hostname = article_url.split('/')[0] %}
+        {% endif %}
+        <div class="pt-2">
+            <a href="{{ article.url }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-sm font-bold text-latte-blue dark:text-frappe-blue hover:underline">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Read on original website ({{ hostname }})
+            </a>
+        </div>
+    </header>
+
+    <!-- AI Summary Box -->
+    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-2xl p-6 border border-latte-blue/20 dark:border-frappe-blue/20">
+        <h2 class="text-sm font-black text-latte-blue dark:text-frappe-blue uppercase tracking-widest mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            AI Summary
+        </h2>
+        <p class="text-latte-text dark:text-frappe-text leading-relaxed italic">
+            "{{ article.summary }}"
+        </p>
+    </div>
+
+    <!-- Article Content -->
+    <article class="reader-content text-latte-text dark:text-frappe-text">
+        {% if article.full_text %}
+            {{ article.full_text | safe }}
+        {% else %}
+            <div class="py-12 text-center space-y-4">
+                <div class="w-16 h-16 mx-auto bg-latte-surface0 dark:bg-frappe-surface0 rounded-2xl flex items-center justify-center text-latte-overlay0 dark:text-frappe-overlay0">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <p class="font-bold text-lg">Full content not available for this article.</p>
+                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 max-w-xs mx-auto">This may be due to a paywall, a JavaScript-heavy site, or a temporary connection error.</p>
+            </div>
+        {% endif %}
+    </article>
+
+    <!-- Footer Actions -->
+    {% if article.full_text %}
+    <footer class="pt-8 border-t border-latte-surface0 dark:border-frappe-surface0 flex flex-col items-center gap-6">
+        <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0">
+            Finished reading?
+        </p>
+        <div class="flex gap-4">
+            <a href="/" class="bg-latte-surface0 dark:bg-frappe-surface0 text-latte-text dark:text-frappe-text px-8 py-3 rounded-xl font-bold hover:bg-latte-surface1 dark:hover:bg-frappe-surface1 transition-all">
+                Back to Feed
+            </a>
+            <a href="{{ article.url }}" target="_blank" rel="noopener" class="bg-latte-blue dark:bg-frappe-blue text-white px-8 py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all">
+                View Original
+            </a>
+        </div>
+    </footer>
+    {% endif %}
+</div>
+{% endblock %}

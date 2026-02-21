@@ -11,100 +11,129 @@
     </div>
     
     <!-- Add New Feed Form -->
-    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-xl p-6">
-        <h3 class="text-lg font-semibold text-latte-text dark:text-frappe-text mb-4 flex items-center gap-2">
-            <svg class="w-5 h-5 text-latte-blue dark:text-frappe-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            Add New Feed
+    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-2xl p-6 shadow-sm border border-latte-surface0 dark:border-frappe-surface0">
+        <h3 class="text-xl font-bold text-latte-text dark:text-frappe-text mb-6 flex items-center gap-2">
+            <div class="p-2 bg-latte-blue/10 dark:bg-frappe-blue/10 rounded-lg text-latte-blue dark:text-frappe-blue">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+            </div>
+            Add New News Source
         </h3>
-        <form id="add-feed-form" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label for="feed-url" class="block text-sm font-medium text-latte-subtext1 dark:text-frappe-subtext1 mb-2">Feed URL</label>
+        <form id="add-feed-form" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="feed-url" class="block text-sm font-bold text-latte-subtext1 dark:text-frappe-subtext1">Feed RSS URL</label>
                     <input 
                         type="url" 
                         id="feed-url" 
                         name="url" 
                         required
                         placeholder="https://example.com/rss"
-                        class="w-full px-4 py-2.5 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors"
+                        class="w-full px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-all outline-none"
                     >
                 </div>
-                <div>
-                    <label for="feed-name" class="block text-sm font-medium text-latte-subtext1 dark:text-frappe-subtext1 mb-2">Feed Name</label>
+                <div class="space-y-2">
+                    <label for="feed-name" class="block text-sm font-bold text-latte-subtext1 dark:text-frappe-subtext1">Source Name</label>
                     <input 
                         type="text" 
                         id="feed-name" 
                         name="name" 
                         required
-                        placeholder="My Tech Blog"
-                        class="w-full px-4 py-2.5 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-colors"
+                        placeholder="e.g. Hacker News, BBC, TechCrunch"
+                        class="w-full px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-all outline-none"
                     >
                 </div>
             </div>
-            <button 
-                type="submit"
-                class="inline-flex items-center gap-2 bg-latte-blue dark:bg-frappe-blue hover:bg-latte-sapphire dark:hover:bg-frappe-sapphire text-white px-5 py-2.5 rounded-xl font-medium shadow-sm hover:shadow transition-all"
-            >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                </svg>
-                Add Feed
-            </button>
+            <div class="flex justify-end">
+                <button 
+                    type="submit"
+                    class="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-latte-blue dark:bg-frappe-blue hover:bg-latte-sapphire dark:hover:bg-frappe-sapphire text-white px-8 py-3.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-95"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Connect Source
+                </button>
+            </div>
         </form>
     </div>
     
     <!-- Feeds List -->
-    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-xl overflow-hidden">
-        <div class="px-6 py-4 border-b border-latte-surface0 dark:border-frappe-surface0">
-            <h3 class="text-lg font-semibold text-latte-text dark:text-frappe-text">Your Feeds</h3>
+    <div class="space-y-4">
+        <div class="flex items-center justify-between px-2">
+            <h3 class="text-xl font-bold text-latte-text dark:text-frappe-text">Your Subscriptions</h3>
+            <span class="px-3 py-1 bg-latte-surface0 dark:bg-frappe-surface0 rounded-full text-xs font-bold text-latte-subtext0 dark:text-frappe-subtext0">
+                {{ feeds|length }} total
+            </span>
         </div>
         
-        <div class="divide-y divide-latte-surface0 dark:divide-frappe-surface0">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {% if feeds %}
                 {% for feed in feeds %}
-                <div class="px-6 py-4 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 transition-colors" data-feed-id="{{ feed.id }}">
-                    <div class="flex items-center justify-between gap-4">
+                <div class="group bg-latte-mantle dark:bg-frappe-mantle rounded-2xl p-5 border border-transparent hover:border-latte-blue/20 dark:hover:border-frappe-blue/20 shadow-sm hover:shadow-md transition-all duration-300" data-feed-id="{{ feed.id }}">
+                    <div class="flex items-start justify-between gap-4">
                         <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-3 flex-wrap">
-                                <h4 class="text-base font-medium text-latte-text dark:text-frappe-text truncate">
-                                    {{ feed.name }}
-                                </h4>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 shrink-0 rounded-xl bg-latte-blue/5 dark:bg-frappe-blue/5 flex items-center justify-center text-latte-blue dark:text-frappe-blue group-hover:bg-latte-blue dark:group-hover:bg-frappe-blue group-hover:text-white transition-all duration-300">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                                    </svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="text-lg font-bold text-latte-text dark:text-frappe-text truncate leading-tight">
+                                        {{ feed.name }}
+                                    </h4>
+                                    <p class="text-xs font-medium text-latte-blue dark:text-frappe-blue truncate mt-0.5 opacity-80">{{ feed.url }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-wrap items-center gap-2 mt-4">
                                 {% if not feed.enabled %}
-                                <span class="px-2 py-0.5 bg-latte-surface1 dark:bg-frappe-surface1 text-latte-subtext0 dark:text-frappe-subtext0 text-xs font-medium rounded-full">
-                                    Disabled
+                                <span class="px-2 py-0.5 bg-latte-surface1 dark:bg-frappe-surface1 text-latte-subtext0 dark:text-frappe-subtext0 text-[10px] font-black uppercase tracking-wider rounded-md">
+                                    Inactive
+                                </span>
+                                {% else %}
+                                <span class="px-2 py-0.5 bg-latte-green/10 dark:bg-frappe-green/10 text-latte-green dark:text-frappe-green text-[10px] font-black uppercase tracking-wider rounded-md">
+                                    Active
                                 </span>
                                 {% endif %}
+                                
                                 {% if feed.error_count > 0 %}
-                                <span class="px-2 py-0.5 bg-latte-red/10 dark:bg-frappe-red/20 text-latte-red dark:text-frappe-red text-xs font-medium rounded-full">
+                                <span class="px-2 py-0.5 bg-latte-red/10 dark:bg-frappe-red/10 text-latte-red dark:text-frappe-red text-[10px] font-black uppercase tracking-wider rounded-md">
                                     {{ feed.error_count }} error{% if feed.error_count != 1 %}s{% endif %}
                                 </span>
                                 {% endif %}
+                                
+                                {% if feed.last_fetched_at %}
+                                <span class="text-[11px] font-medium text-latte-overlay0 dark:text-frappe-overlay0 tabular-nums">
+                                    Updated {{ feed.last_fetched_at.strftime('%b %d, %H:%M') }}
+                                </span>
+                                {% endif %}
                             </div>
-                            <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 mt-1 truncate">{{ feed.url }}</p>
-                            {% if feed.last_fetched_at %}
-                            <p class="text-xs text-latte-overlay0 dark:text-frappe-overlay0 mt-1">
-                                Last fetched: {{ feed.last_fetched_at.strftime('%b %d, %Y %H:%M') }}
-                            </p>
-                            {% endif %}
                         </div>
                         
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-col items-center gap-2">
                             <button 
                                 onclick="toggleFeed('{{ feed.id }}', {{ 'false' if feed.enabled else 'true' }})"
-                                class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
-                                       {% if feed.enabled %}bg-latte-green/10 dark:bg-frappe-green/20 text-latte-green dark:text-frappe-green hover:bg-latte-green/20 dark:hover:bg-frappe-green/30{% else %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface1 dark:hover:bg-frappe-surface1{% endif %}"
+                                class="p-2.5 rounded-xl transition-all duration-300
+                                       {% if feed.enabled %}text-latte-green dark:text-frappe-green bg-latte-green/5 dark:bg-frappe-green/5 hover:bg-latte-green dark:hover:bg-frappe-green hover:text-white{% else %}text-latte-overlay0 dark:text-frappe-overlay0 bg-latte-surface0 dark:bg-frappe-surface0 hover:bg-latte-blue dark:hover:bg-frappe-blue hover:text-white{% endif %}"
+                                title="{% if feed.enabled %}Disable{% else %}Enable{% endif %} feed"
+                                aria-label="{% if feed.enabled %}Disable{% else %}Enable{% endif %} feed"
+                                aria-pressed="{{ 'true' if feed.enabled else 'false' }}"
                             >
-                                {% if feed.enabled %}Enabled{% else %}Disabled{% endif %}
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z" />
+                                </svg>
                             </button>
                             
                             <button 
                                 onclick="deleteFeed('{{ feed.id }}')"
-                                class="p-2 text-latte-red dark:text-frappe-red hover:bg-latte-red/10 dark:hover:bg-frappe-red/20 rounded-lg transition-colors"
-                                title="Delete feed"
+                                class="p-2.5 text-latte-red/60 dark:text-frappe-red/60 hover:text-white hover:bg-latte-red dark:hover:bg-frappe-red rounded-xl transition-all duration-300"
+                                title="Remove subscription"
+                                aria-label="Remove {{ feed.name }} subscription"
                             >
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                             </button>

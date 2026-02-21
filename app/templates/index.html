@@ -37,53 +37,60 @@
     </div>
     
     <!-- Tabs-style Filters -->
-    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-xl p-2">
-        <div class="flex flex-wrap gap-1">
+    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-2xl p-1.5 shadow-inner-sm overflow-x-auto no-scrollbar">
+        <div class="flex items-center min-w-max gap-1">
             <a href="/" 
                id="tab-relevant"
-               class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all {% if not show_all and not filter_unread and not filter_starred %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-text dark:text-frappe-text shadow-sm{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50{% endif %}">
+               class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 {% if not show_all and not filter_unread and not filter_starred %}bg-white dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-md scale-[1.02]{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 hover:text-latte-text dark:hover:text-frappe-text{% endif %}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
                 Relevant ({{ min_relevance_score }}+)
             </a>
             <a href="/?show_all=true" 
                id="tab-all"
-               class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all {% if show_all %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-text dark:text-frappe-text shadow-sm{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50{% endif %}">
-                All
+               class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 {% if show_all %}bg-white dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-md scale-[1.02]{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 hover:text-latte-text dark:hover:text-frappe-text{% endif %}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+                All Posts
             </a>
             <a href="/?filter_unread=true" 
                id="tab-unread"
-               class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all {% if filter_unread %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-text dark:text-frappe-text shadow-sm{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50{% endif %}">
+               class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 {% if filter_unread %}bg-white dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-md scale-[1.02]{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 hover:text-latte-text dark:hover:text-frappe-text{% endif %}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                 Unread
             </a>
             <a href="/?filter_starred=true" 
                id="tab-starred"
-               class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all {% if filter_starred %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-text dark:text-frappe-text shadow-sm{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50{% endif %}">
+               class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 {% if filter_starred %}bg-white dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-md scale-[1.02]{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50 hover:text-latte-text dark:hover:text-frappe-text{% endif %}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
                 Starred
             </a>
         </div>
     </div>
     
     <!-- Articles List -->
-    <div class="space-y-3" id="articles-container">
+    <div class="grid grid-cols-1 gap-4" id="articles-container">
         {% if articles %}
             {% for article in articles %}
-            <article class="article-item article-card bg-latte-mantle dark:bg-frappe-mantle rounded-xl p-5 
-                        {% if article.relevance_score >= 8 %}score-high{% elif article.relevance_score >= 5 %}score-medium{% else %}score-low{% endif %}
-                        {% if article.is_read %}opacity-60{% endif %}
-                        hover:shadow-md dark:hover:shadow-frappe-crust/50 transition-all"
+            <article class="article-item group article-card bg-latte-mantle dark:bg-frappe-mantle rounded-2xl p-5 border border-transparent
+                        {% if article.relevance_score >= 8 %}hover:border-latte-green/30 dark:hover:border-frappe-green/30 shadow-latte-green/5 dark:shadow-frappe-green/5{% elif article.relevance_score >= 5 %}hover:border-latte-yellow/30 dark:hover:border-frappe-yellow/30 shadow-latte-yellow/5 dark:shadow-frappe-yellow/5{% else %}hover:border-latte-overlay0/30 dark:hover:border-frappe-overlay0/30 shadow-latte-overlay0/5 dark:shadow-frappe-overlay0/5{% endif %}
+                        {% if article.is_read %}opacity-60 saturate-[0.25]{% endif %}
+                        hover:shadow-xl transition-all duration-300 relative overflow-hidden"
                  data-article-id="{{ article.id }}"
                  data-relevance="{{ article.relevance_score }}"
                  data-read="{{ 'true' if article.is_read else 'false' }}"
-                 data-starred="{{ 'true' if article.is_starred else 'false' }}"
-                 style="transition: opacity 0.3s ease, transform 0.3s ease, max-height 0.3s ease, margin 0.3s ease, padding 0.3s ease; overflow: hidden;">
+                 data-starred="{{ 'true' if article.is_starred else 'false' }}">
                 
+                <!-- Relevance Glow Effect -->
+                <div class="absolute top-0 left-0 w-1.5 h-full 
+                    {% if article.relevance_score >= 8 %}bg-latte-green dark:bg-frappe-green opacity-80{% elif article.relevance_score >= 5 %}bg-latte-yellow dark:bg-frappe-yellow opacity-80{% else %}bg-latte-overlay0 dark:bg-frappe-overlay0 opacity-40{% endif %}">
+                </div>
+
                 <div class="flex justify-between items-start gap-4">
                     <div class="flex-1 min-w-0">
-                        <div class="flex items-start gap-2">
+                        <div class="flex items-start gap-3">
                             <!-- Star Button -->
                             <button 
                                 type="button"
-                                class="star-toggle shrink-0 mt-1 p-1 rounded transition-all {% if article.is_starred %}text-latte-yellow dark:text-frappe-yellow{% else %}text-latte-overlay0 dark:text-frappe-overlay0 hover:text-latte-yellow dark:hover:text-frappe-yellow{% endif %}"
-                                style="transition: transform 0.2s ease, color 0.15s ease;"
+                                class="star-toggle shrink-0 mt-0.5 p-2 rounded-xl transition-all duration-300 {% if article.is_starred %}text-latte-yellow dark:text-frappe-yellow bg-latte-yellow/10 dark:bg-frappe-yellow/10{% else %}text-latte-overlay0 dark:text-frappe-overlay0 hover:text-latte-yellow dark:hover:text-frappe-yellow hover:bg-latte-yellow/5 dark:hover:bg-frappe-yellow/5{% endif %}"
                                 data-article-id="{{ article.id }}"
                                 data-is-starred="{{ 'true' if article.is_starred else 'false' }}"
                                 title="{% if article.is_starred %}Unstar{% else %}Star{% endif %} article"
@@ -94,15 +101,22 @@
                                 </svg>
                             </button>
                             <div class="flex-1 min-w-0">
-                                <a href="{{ article.url }}" target="_blank" rel="noopener" class="text-lg font-semibold text-latte-text dark:text-frappe-text hover:text-latte-blue dark:hover:text-frappe-blue transition-colors line-clamp-2">
+                                <a href="/reader/{{ article.id }}" class="text-lg sm:text-xl font-bold text-latte-text dark:text-frappe-text hover:text-latte-blue dark:hover:text-frappe-blue transition-colors leading-snug line-clamp-2">
                                     {{ article.title }}
                                 </a>
-                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-sm text-latte-subtext0 dark:text-frappe-subtext0">
-                                    <span class="font-medium text-latte-subtext1 dark:text-frappe-subtext1">{{ article.source }}</span>
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs sm:text-sm text-latte-subtext0 dark:text-frappe-subtext0">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="font-bold text-latte-blue dark:text-frappe-blue bg-latte-blue/5 dark:bg-frappe-blue/5 px-2 py-0.5 rounded-md">{{ article.source }}</span>
+                                        <a href="{{ article.url }}" target="_blank" rel="noopener" class="p-1 hover:bg-latte-surface0 dark:hover:bg-frappe-surface0 rounded-md transition-all text-latte-overlay0 dark:text-frappe-overlay0 hover:text-latte-blue dark:hover:text-frappe-blue" title="Visit original site" aria-label="Visit original site for {{ article.title }}">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                            </svg>
+                                        </a>
+                                    </div>
                                     <span class="text-latte-overlay0 dark:text-frappe-overlay0">•</span>
-                                    <span>{{ article.published_at.strftime('%b %d, %Y') }}</span>
+                                    <span class="tabular-nums">{{ article.published_at.strftime('%b %d, %Y') }}</span>
                                     <span class="text-latte-overlay0 dark:text-frappe-overlay0">•</span>
-                                    <span class="inline-flex items-center gap-1 font-semibold
+                                    <span class="inline-flex items-center gap-1 font-bold
                                         {% if article.relevance_score >= 8 %}text-latte-green dark:text-frappe-green
                                         {% elif article.relevance_score >= 5 %}text-latte-yellow dark:text-frappe-yellow
                                         {% else %}text-latte-overlay0 dark:text-frappe-overlay0{% endif %}">
@@ -113,31 +127,31 @@
                         </div>
                     </div>
                     
-                    <!-- Read/Unread Checkmark Icon -->
+                    <!-- Read/Unread Toggle -->
                     <button 
                         type="button"
-                        class="read-toggle shrink-0 p-2 rounded-lg transition-colors
-                               {% if article.is_read %}text-latte-green dark:text-frappe-green bg-latte-green/10 dark:bg-frappe-green/10 hover:bg-latte-green/20 dark:hover:bg-frappe-green/20{% else %}text-latte-overlay0 dark:text-frappe-overlay0 hover:bg-latte-surface0 dark:hover:bg-frappe-surface0{% endif %}"
+                        class="read-toggle shrink-0 p-3 rounded-2xl transition-all duration-300
+                               {% if article.is_read %}text-latte-green dark:text-frappe-green bg-latte-green/10 dark:bg-frappe-green/10 shadow-inner{% else %}text-latte-overlay0 dark:text-frappe-overlay0 bg-latte-base dark:bg-frappe-base hover:text-latte-blue dark:hover:text-frappe-blue shadow-sm{% endif %}"
                         data-article-id="{{ article.id }}"
                         data-is-read="{{ 'true' if article.is_read else 'false' }}"
                         title="{% if article.is_read %}Mark as unread{% else %}Mark as read{% endif %}"
                         aria-label="{% if article.is_read %}Mark as unread{% else %}Mark as read{% endif %}"
                     >
-                        <svg class="w-5 h-5" fill="{% if article.is_read %}currentColor{% else %}none{% endif %}" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        <svg class="w-6 h-6" fill="{% if article.is_read %}currentColor{% else %}none{% endif %}" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                         </svg>
                     </button>
                 </div>
                 
                 {% if article.summary %}
-                <p class="text-latte-subtext1 dark:text-frappe-subtext1 mt-3 ml-7 text-sm leading-relaxed">{{ article.summary }}</p>
+                <p class="text-latte-subtext1 dark:text-frappe-subtext1 mt-4 ml-12 text-sm sm:text-base leading-relaxed line-clamp-4">{{ article.summary }}</p>
                 {% endif %}
                 
                 {% if article.tags %}
-                <div class="flex flex-wrap gap-1.5 mt-3 ml-7">
+                <div class="flex flex-wrap gap-1.5 mt-4 ml-12">
                     {% for tag in article.tags %}
-                    <span class="px-2.5 py-0.5 bg-latte-surface0 dark:bg-frappe-surface0 text-latte-subtext0 dark:text-frappe-subtext0 text-xs font-medium rounded-full">
-                        {{ tag }}
+                    <span class="px-2.5 py-1 bg-latte-base dark:bg-frappe-base text-latte-subtext0 dark:text-frappe-subtext0 text-xs font-bold rounded-lg border border-latte-surface0 dark:border-frappe-surface0">
+                        #{{ tag.lower().replace(' ', '') }}
                     </span>
                     {% endfor %}
                 </div>
@@ -145,20 +159,34 @@
             </article>
             {% endfor %}
         {% else %}
-            <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-xl p-12 text-center">
-                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-latte-surface0 dark:bg-frappe-surface0 flex items-center justify-center">
-                    <svg class="w-8 h-8 text-latte-overlay0 dark:text-frappe-overlay0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-3xl p-16 text-center border-2 border-dashed border-latte-surface0 dark:border-frappe-surface0">
+                <div class="w-20 h-20 mx-auto mb-6 rounded-3xl bg-latte-surface0 dark:bg-frappe-surface0 flex items-center justify-center text-latte-overlay0 dark:text-frappe-overlay0">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                     </svg>
                 </div>
-                <h3 class="text-lg font-semibold text-latte-text dark:text-frappe-text">No articles found</h3>
-                {% if not show_all %}
-                <p class="mt-2 text-latte-subtext0 dark:text-frappe-subtext0 text-sm">No articles meet your minimum relevance score ({{ min_relevance_score }}+)</p>
-                <a href="/?show_all=true" class="inline-block mt-3 text-latte-blue dark:text-frappe-blue text-sm font-medium hover:underline">View all articles →</a>
-                {% else %}
-                <p class="mt-2 text-latte-subtext0 dark:text-frappe-subtext0 text-sm">Click "Refresh" to fetch articles from your RSS feeds</p>
-                <p class="mt-1 text-latte-overlay0 dark:text-frappe-overlay0 text-xs">Make sure you have some feeds added first</p>
-                {% endif %}
+                <h3 class="text-xl font-bold text-latte-text dark:text-frappe-text">Your feed is empty</h3>
+                <p class="mt-2 text-latte-subtext0 dark:text-frappe-subtext0 max-w-xs mx-auto">
+                    {% if filter_starred %}
+                        You haven't starred any articles yet.
+                    {% elif filter_unread %}
+                        You've caught up! No unread articles left.
+                    {% elif not show_all %}
+                        No articles match your relevance score ({{ min_relevance_score }}+).
+                    {% else %}
+                        No articles found in the database.
+                    {% endif %}
+                </p>
+                <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <a href="/?show_all=true" class="inline-flex items-center gap-2 bg-latte-blue dark:bg-frappe-blue text-white px-6 py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+                        Clear Filters & Show All
+                    </a>
+                    <button onclick="refreshFeeds()" class="inline-flex items-center gap-2 bg-latte-surface0 dark:bg-frappe-surface0 text-latte-text dark:text-frappe-text px-6 py-3 rounded-xl font-bold hover:bg-latte-surface1 dark:hover:bg-frappe-surface1 transition-all active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        Refresh Now
+                    </button>
+                </div>
             </div>
         {% endif %}
     </div>
@@ -406,6 +434,23 @@
                     starredContainer.style.display = 'inline-flex';
                 }
             }
+        }
+    }
+
+    // Refresh feeds
+    async function refreshFeeds() {
+        showToast('Fetching new articles...', 'info');
+        try {
+            const response = await fetch('/api/articles/refresh', { method: 'POST' });
+            const result = await response.json();
+            if (response.ok) {
+                showToast(result.message || 'Feeds refreshed!', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast('Failed to refresh feeds', 'error');
+            }
+        } catch (error) {
+            showToast('Error refreshing feeds', 'error');
         }
     }
 </script>

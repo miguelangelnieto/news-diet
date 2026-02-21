@@ -47,9 +47,6 @@ async def lifespan(app: FastAPI):
     # Initialize default preferences if none exist
     await initialize_default_preferences()
     
-    # Migrate existing articles to add is_hidden field
-    await migrate_articles_schema()
-    
     # Start scheduler
     start_scheduler()
     
@@ -109,20 +106,6 @@ async def initialize_default_preferences():
         logger.info("Default preferences created")
 
 
-async def migrate_articles_schema():
-    """Backfill is_hidden field for articles created before this field was added."""
-    db = get_database()
-    
-    # Update all articles without is_hidden field to set it to False
-    result = await db.articles.update_many(
-        {"is_hidden": {"$exists": False}},
-        {"$set": {"is_hidden": False}}
-    )
-    
-    if result.modified_count > 0:
-        logger.info(f"Migrated {result.modified_count} existing articles to add is_hidden field")
-
-
 # ============================================
 # Frontend Routes (HTML)
 # ============================================
@@ -164,8 +147,8 @@ async def dashboard(request: Request, show_all: bool = False, filter_unread: boo
     # Get starred count
     starred_count = await db.articles.count_documents({"is_starred": True})
     
-    # Get total articles count (for "All" view indicator)
-    total_count = await db.articles.count_documents({})
+    # Get total articles count (fast estimated count for "All" view indicator)
+    total_count = await db.articles.estimated_document_count()
     
     return templates.TemplateResponse(
         "index.html",
@@ -238,6 +221,51 @@ async def preferences_page(request: Request):
             "preferences": prefs,
             "dark_mode": dark_mode,
             "model_name": settings.ollama_model
+        }
+    )
+
+
+@app.get("/reader/{article_id}", response_class=HTMLResponse)
+async def reader_page(request: Request, article_id: str):
+    db = get_database()
+    
+    try:
+        oid = ObjectId(article_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid article ID format")
+    
+    article = await db.articles.find_one({"_id": oid})
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    
+    # Get dark mode preference
+    prefs = await db.preferences.find_one()
+    dark_mode = prefs.get("dark_mode", False) if prefs else False
+    
+    # Mark as read when opening in reader mode
+    await db.articles.update_one({"_id": oid}, {"$set": {"is_read": True}})
+    
+    # Fetch full content on-demand if not yet cached
+    if not article.get("full_text") and article.get("url"):
+        full_text = await rss_feeder.fetch_full_content(article["url"])
+        if full_text:
+            article["full_text"] = full_text
+            await db.articles.update_one({"_id": oid}, {"$set": {"full_text": full_text}})
+    
+    # Calculate estimated reading time
+    reading_time = 0
+    if article.get("full_text"):
+        # Simple word count divided by 200 (average WPM)
+        word_count = len(article["full_text"].split())
+        reading_time = max(1, round(word_count / 200))
+    
+    return templates.TemplateResponse(
+        "reader.html",
+        {
+            "request": request,
+            "article": article,
+            "dark_mode": dark_mode,
+            "reading_time": reading_time
         }
     )
 
@@ -510,25 +538,24 @@ async def recalculate_all_scores():
             dark_mode=prefs_doc.get("dark_mode", False)
         )
         
-        # Get all articles
+        # Get all articles using a cursor to avoid loading all into memory
         cursor = db.articles.find({})
-        articles = await cursor.to_list(length=None)
         
-        if not articles:
-            return {"success": True, "processed_count": 0, "message": "No articles to process"}
-        
-        # Process articles with proper error handling
+        # Process articles one by one with proper error handling
         from app.services.ai_processor import ai_processor
         
         processed = 0
-        for article in articles:
+        async for article in cursor:
             try:
                 # Use the process_article method which handles both summary and scoring
                 result = await ai_processor.process_article(
                     article.get("title", ""),
-                    article.get("content", ""),
+                    article.get("summary", "") or article.get("full_text", ""),
                     preferences
                 )
+                
+                # Determine if article should be hidden based on new relevance score
+                is_hidden = result["relevance_score"] < preferences.min_relevance_score if result["relevance_score"] is not None else False
                 
                 # Update article with new data
                 await db.articles.update_one(
@@ -536,7 +563,8 @@ async def recalculate_all_scores():
                     {"$set": {
                         "summary": result["summary"],
                         "tags": result["tags"],
-                        "relevance_score": result["relevance_score"]
+                        "relevance_score": result["relevance_score"],
+                        "is_hidden": is_hidden
                     }}
                 )
                 processed += 1
