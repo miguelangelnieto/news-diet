@@ -14,7 +14,8 @@
     <meta name="application-name" content="News Diet">
     <meta name="apple-mobile-web-app-title" content="News Diet">
     <meta name="description" content="AI-powered RSS news aggregator inspired by Google Reader">
-    <meta name="theme-color" content="#1e66f5">
+    <!-- Dynamic Theme Color based on Mode -->
+    <meta name="theme-color" id="theme-color-meta" content="{{ '#292c3c' if dark_mode else '#e6e9ef' }}">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">

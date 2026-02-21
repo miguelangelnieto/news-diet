@@ -1,6 +1,7 @@
 import feedparser
 import logging
 import httpx
+import trafilatura
 from datetime import datetime, timezone
 from bs4 import BeautifulSoup
 from pymongo.errors import DuplicateKeyError
@@ -53,6 +54,29 @@ class RSSFeeder:
             return None
         except httpx.RequestError as e:
             logger.warning(f"Request error fetching feed {feed_url}: {e}")
+            return None
+    
+    async def _fetch_full_content(self, url: str) -> str | None:
+        """Fetch and extract clean text from the full article URL."""
+        try:
+            async with httpx.AsyncClient(timeout=FEED_FETCH_TIMEOUT) as client:
+                response = await client.get(url, follow_redirects=True)
+                response.raise_for_status()
+                
+                # Extract clean text using trafilatura
+                # We use include_links=True to keep any useful links within the text
+                # include_images=False as requested by the user
+                downloaded = response.text
+                result = trafilatura.extract(
+                    downloaded, 
+                    include_links=True, 
+                    include_images=False,
+                    include_comments=False,
+                    output_format='html' # We store HTML to preserve some structure (bold, links, etc)
+                )
+                return result
+        except Exception as e:
+            logger.warning(f"Error extracting full content from {url}: {e}")
             return None
     
     async def fetch_feed(self, feed_url: str, feed_name: str) -> int:
@@ -121,6 +145,9 @@ class RSSFeeder:
                         preferences=preferences
                     )
                     
+                    # Fetch full content for Reader Mode (cached locally)
+                    full_text = await self._fetch_full_content(url)
+                    
                     # Determine if article should be hidden based on relevance score threshold
                     min_score = preferences.min_relevance_score
                     is_hidden = ai_result["relevance_score"] < min_score if ai_result["relevance_score"] is not None else False
@@ -134,6 +161,7 @@ class RSSFeeder:
                         "summary": ai_result["summary"],
                         "relevance_score": ai_result["relevance_score"],
                         "tags": ai_result["tags"],
+                        "full_text": full_text,  # Cleaned HTML content
                         "is_read": False,
                         "is_hidden": is_hidden,
                         "created_at": datetime.now(timezone.utc)

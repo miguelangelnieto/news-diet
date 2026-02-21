@@ -225,6 +225,44 @@ async def preferences_page(request: Request):
     )
 
 
+@app.get("/reader/{article_id}", response_class=HTMLResponse)
+async def reader_page(request: Request, article_id: str):
+    db = get_database()
+    
+    try:
+        oid = ObjectId(article_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid article ID format")
+    
+    article = await db.articles.find_one({"_id": oid})
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    
+    # Get dark mode preference
+    prefs = await db.preferences.find_one()
+    dark_mode = prefs.get("dark_mode", False) if prefs else False
+    
+    # Mark as read when opening in reader mode
+    await db.articles.update_one({"_id": oid}, {"$set": {"is_read": True}})
+    
+    # Calculate estimated reading time
+    reading_time = 0
+    if article.get("full_text"):
+        # Simple word count divided by 200 (average WPM)
+        word_count = len(article["full_text"].split())
+        reading_time = max(1, round(word_count / 200))
+    
+    return templates.TemplateResponse(
+        "reader.html",
+        {
+            "request": request,
+            "article": article,
+            "dark_mode": dark_mode,
+            "reading_time": reading_time
+        }
+    )
+
+
 # ============================================
 # API Routes - Articles
 # ============================================
