@@ -47,9 +47,6 @@ async def lifespan(app: FastAPI):
     # Initialize default preferences if none exist
     await initialize_default_preferences()
     
-    # Migrate existing articles to add is_hidden field
-    await migrate_articles_schema()
-    
     # Start scheduler
     start_scheduler()
     
@@ -107,20 +104,6 @@ async def initialize_default_preferences():
         
         await db.preferences.insert_one(default_prefs)
         logger.info("Default preferences created")
-
-
-async def migrate_articles_schema():
-    """Backfill is_hidden field for articles created before this field was added."""
-    db = get_database()
-    
-    # Update all articles without is_hidden field to set it to False
-    result = await db.articles.update_many(
-        {"is_hidden": {"$exists": False}},
-        {"$set": {"is_hidden": False}}
-    )
-    
-    if result.modified_count > 0:
-        logger.info(f"Migrated {result.modified_count} existing articles to add is_hidden field")
 
 
 # ============================================

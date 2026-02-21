@@ -58,13 +58,15 @@ class AIProcessor:
             return False
     
     async def summarize_article(self, title: str, content: str) -> str:
-        """Generate 3-4 sentence summary in the article's original language."""
+        """Generate exactly 4 informative sentences in the article's original language."""
         try:
-            prompt = f"""Summarize this news article in 3-4 informative sentences. Include the key facts and main points.
+            prompt = f"""Summarize this news article in EXACTLY 4 informative sentences. 
+Include only the key facts and main points.
 
-IMPORTANT: Write the summary in the SAME LANGUAGE as the original article. If the article is in English, write in English. If it's in Spanish, write in Spanish. Do NOT translate.
-
-DO NOT include any preamble like "Here is a summary" or "This article discusses". Start directly with the summary content.
+IMPORTANT: 
+- Write the summary in the SAME LANGUAGE as the original article.
+- NO PREAMBLE like "Here is a summary". Start directly.
+- DO NOT exceed 4 sentences.
 
 Title: {title}
 Content: {content[:1000]}
@@ -74,11 +76,11 @@ Summary:"""
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are a tech news summarizer. Output ONLY the summary text without any preamble, introduction, or meta-commentary. Be informative yet concise. ALWAYS write the summary in the same language as the input article."},
+                    {"role": "system", "content": "You are a concise tech news summarizer. Output EXACTLY 4 sentences. NO introduction or meta-commentary. ALWAYS use the same language as the input article."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.3,
-                max_tokens=200
+                max_tokens=250
             )
             
             summary = response.choices[0].message.content.strip()
@@ -94,14 +96,15 @@ Summary:"""
             summary_lower = summary.lower()
             for prefix in unwanted_prefixes:
                 if summary_lower.startswith(prefix):
-                    # Find where the actual content starts (after first sentence/colon)
                     if ':' in summary[:50]:
                         summary = summary.split(':', 1)[1].strip()
-                    elif '.' in summary[:100]:
-                        parts = summary.split('.', 1)
-                        if len(parts) > 1:
-                            summary = parts[1].strip()
                     break
+            
+            # Final safety check: if LLM ignored the 4-sentence limit, we take the first 4.
+            # This prevents UI layout shifts.
+            sentences = [s.strip() for s in summary.split('.') if s.strip()]
+            if len(sentences) > 4:
+                summary = '. '.join(sentences[:4]) + '.'
             
             return summary
             
