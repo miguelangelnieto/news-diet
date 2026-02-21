@@ -51,7 +51,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto space-y-8 pb-12">
+<div class="space-y-8 pb-12">
     <!-- Navigation Back -->
     <div class="flex items-center justify-between">
         <a href="/" class="inline-flex items-center gap-2 text-latte-blue dark:text-frappe-blue font-bold hover:underline">
@@ -59,12 +59,6 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Back to Feed
-        </a>
-        <a href="{{ article.url }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-latte-subtext0 dark:text-frappe-subtext0 hover:text-latte-blue dark:hover:text-frappe-blue transition-colors text-sm font-medium">
-            Visit Original Site
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
         </a>
     </div>
 
@@ -124,15 +118,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                 </div>
-                <p class="font-bold">Full content not available for this article.</p>
-                <a href="{{ article.url }}" target="_blank" rel="noopener" class="inline-block bg-latte-blue dark:bg-frappe-blue text-white px-6 py-2 rounded-xl font-bold shadow-md hover:shadow-lg transition-all">
-                    Read on Original Site
-                </a>
+                <p class="font-bold text-lg">Full content not available for this article.</p>
+                <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0 max-w-xs mx-auto">This may be due to a paywall, a JavaScript-heavy site, or a temporary connection error.</p>
             </div>
         {% endif %}
     </article>
 
     <!-- Footer Actions -->
+    {% if article.full_text %}
     <footer class="pt-8 border-t border-latte-surface0 dark:border-frappe-surface0 flex flex-col items-center gap-6">
         <p class="text-sm text-latte-subtext0 dark:text-frappe-subtext0">
             Finished reading?
@@ -146,5 +139,6 @@
             </a>
         </div>
     </footer>
+    {% endif %}
 </div>
 {% endblock %}
