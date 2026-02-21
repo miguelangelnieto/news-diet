@@ -16,10 +16,10 @@
         font-weight: 700;
         margin-top: 2.5rem;
         margin-bottom: 1rem;
-        color: var(--latte-text);
+        color: #4c4f69; /* Latte text */
     }
     .dark .reader-content h1, .dark .reader-content h2, .dark .reader-content h3 {
-        color: var(--frappe-text);
+        color: #c6d0f5; /* Frappe text */
     }
     .reader-content a {
         color: #1e66f5; /* Latte blue */
@@ -84,12 +84,20 @@
         <h1 class="text-3xl sm:text-4xl font-black text-latte-text dark:text-frappe-text leading-tight">
             {{ article.title }}
         </h1>
+        {% set article_url = article.url or '' %}
+        {% set hostname = article_url %}
+        {% if '//' in article_url %}
+        {% set after_scheme = article_url.split('//')[1] %}
+        {% set hostname = after_scheme.split('/')[0] %}
+        {% elif '/' in article_url %}
+        {% set hostname = article_url.split('/')[0] %}
+        {% endif %}
         <div class="pt-2">
             <a href="{{ article.url }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-sm font-bold text-latte-blue dark:text-frappe-blue hover:underline">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
-                Read on original website ({{ article.url.split('//')[1].split('/')[0] }})
+                Read on original website ({{ hostname }})
             </a>
         </div>
     </header>

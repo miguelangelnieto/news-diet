@@ -245,6 +245,13 @@ async def reader_page(request: Request, article_id: str):
     # Mark as read when opening in reader mode
     await db.articles.update_one({"_id": oid}, {"$set": {"is_read": True}})
     
+    # Fetch full content on-demand if not yet cached
+    if not article.get("full_text") and article.get("url"):
+        full_text = await rss_feeder.fetch_full_content(article["url"])
+        if full_text:
+            article["full_text"] = full_text
+            await db.articles.update_one({"_id": oid}, {"$set": {"full_text": full_text}})
+    
     # Calculate estimated reading time
     reading_time = 0
     if article.get("full_text"):
@@ -543,7 +550,7 @@ async def recalculate_all_scores():
                 # Use the process_article method which handles both summary and scoring
                 result = await ai_processor.process_article(
                     article.get("title", ""),
-                    article.get("content", ""),
+                    article.get("summary", "") or article.get("full_text", ""),
                     preferences
                 )
                 
