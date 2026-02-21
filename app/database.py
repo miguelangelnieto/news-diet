@@ -57,8 +57,8 @@ async def create_indexes() -> None:
     # Sorting by date only (All view)
     await db.articles.create_index([("published_at", -1)])
     
-    # For cleanup task: old unstarred articles
-    await db.articles.create_index([("is_starred", 1), ("published_at", 1)])
+    # For cleanup task: old unstarred articles (match cleanup_old_articles filter on created_at)
+    await db.articles.create_index([("is_starred", 1), ("created_at", 1)])
     
     # Other useful indexes
     await db.articles.create_index("source")

@@ -119,6 +119,8 @@
                                 class="p-2.5 rounded-xl transition-all duration-300
                                        {% if feed.enabled %}text-latte-green dark:text-frappe-green bg-latte-green/5 dark:bg-frappe-green/5 hover:bg-latte-green dark:hover:bg-frappe-green hover:text-white{% else %}text-latte-overlay0 dark:text-frappe-overlay0 bg-latte-surface0 dark:bg-frappe-surface0 hover:bg-latte-blue dark:hover:bg-frappe-blue hover:text-white{% endif %}"
                                 title="{% if feed.enabled %}Disable{% else %}Enable{% endif %} feed"
+                                aria-label="{% if feed.enabled %}Disable{% else %}Enable{% endif %} feed"
+                                aria-pressed="{{ 'true' if feed.enabled else 'false' }}"
                             >
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z" />
@@ -129,6 +131,7 @@
                                 onclick="deleteFeed('{{ feed.id }}')"
                                 class="p-2.5 text-latte-red/60 dark:text-frappe-red/60 hover:text-white hover:bg-latte-red dark:hover:bg-frappe-red rounded-xl transition-all duration-300"
                                 title="Remove subscription"
+                                aria-label="Remove {{ feed.name }} subscription"
                             >
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
