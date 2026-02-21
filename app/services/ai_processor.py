@@ -133,68 +133,86 @@ Summary:"""
         """
         try:
             # Build context from user preferences
-            interests_str = ", ".join(preferences.interests) if preferences.interests else "general tech news"
+            interests_list = preferences.interests if preferences.interests else []
+            interests_str = ", ".join(interests_list) if interests_list else "general tech news"
             exclude_str = ", ".join(preferences.exclude_topics) if preferences.exclude_topics else "none"
             
-            # Simplified prompt - just ask for tags and basic quality assessment
-            prompt = f"""Analyze this article for a reader interested in: {interests_str}
-Topics to AVOID: {exclude_str}
+            # Improved prompt with Chain-of-Thought to help small models
+            prompt = f"""Analyze this article.
 
-Your task:
-1. Identify which topics from the interest list this article is CLEARLY about (main focus, not just mentioned)
-2. Assess the article quality: low, medium, or high
+ALLOWED TOPICS: {interests_str}
+EXCLUDED TOPICS: {exclude_str}
 
-Available topics: {interests_str}
-
-Article:
+ARTICLE:
 Title: {title}
-Content: {content[:800]}
+Content: {content[:1000]}
 
-IMPORTANT:
-- Only tag topics that are a PRIMARY focus of the article
-- If article is about excluded topics, return EXCLUDED
-- Return 0 to 4 tags maximum
+INSTRUCTIONS:
+1. Is the article PRIMARILY about any "ALLOWED TOPICS"? (ignore minor mentions)
+2. Is it about "EXCLUDED TOPICS"?
+3. Assess quality (depth, facts).
 
-Format:
-Tags: [tag1, tag2] OR Tags: [] OR Tags: EXCLUDED
-Quality: low OR Quality: medium OR Quality: high"""
+OUTPUT FORMAT:
+Reasoning: <1 short sentence explaining why it matches a topic or is excluded>
+Tags: <comma_separated_matches_from_allowed_list_ONLY>
+Quality: <low|medium|high>
+
+EXAMPLE:
+Reasoning: The article discusses a new Python feature, which matches the 'Python' interest.
+Tags: Python
+Quality: high
+"""
             
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": f"You are a topic tagger. Extract relevant topics from articles. Only use these exact topics: {interests_str}. Be selective - most articles should get 0-1 tags."},
+                    {"role": "system", "content": "You are a strict classifier. You ONLY select tags from the ALLOWED TOPICS list. If no exact match, return empty tags."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.2,
-                max_tokens=100
+                temperature=0.1, # Lower temperature for more deterministic results
+                max_tokens=150
             )
             
             result = response.choices[0].message.content.strip()
             
-            # Parse tags
+            # Parse tags with improved robustness
             tags = []
-            quality = "medium"  # Default
+            quality = "medium"
             is_excluded = False
+            
+            # Case-insensitive lookup map
+            interests_map = {i.lower(): i for i in interests_list}
             
             for line in result.split("\n"):
                 line = line.strip()
-                if line.startswith("Tags:"):
-                    tags_str = line.split(":", 1)[1].strip()
-                    if tags_str.upper() == "EXCLUDED":
+                if line.lower().startswith("tags:"):
+                    tags_part = line.split(":", 1)[1].strip()
+                    
+                    if "excluded" in tags_part.lower():
                         is_excluded = True
                         tags = []
-                    elif tags_str.lower() in ["none", "n/a", "na", "[]", ""]:
-                        tags = []
+                        continue
+                        
+                    # Split by comma and clean up
+                    raw_candidates = [t.strip().strip("[]\"'") for t in tags_part.split(",")]
+                    
+                    for raw in raw_candidates:
+                        raw_lower = raw.lower()
+                        # Strict matching against interests list
+                        if raw_lower in interests_map:
+                            tags.append(interests_map[raw_lower])
+                            
+                elif line.lower().startswith("quality:"):
+                    quality_part = line.split(":", 1)[1].strip().lower()
+                    if "high" in quality_part:
+                        quality = "high"
+                    elif "low" in quality_part:
+                        quality = "low"
                     else:
-                        raw_tags = [t.strip().strip("[]\"'") for t in tags_str.split(",")]
-                        # Filter tags to only include those in user's interests (case-insensitive match)
-                        interests_lower = {i.lower(): i for i in preferences.interests} if preferences.interests else {}
-                        # Use original capitalization from interests list
-                        tags = [interests_lower[t.lower()] for t in raw_tags if t.lower() in interests_lower][:3]
-                elif line.startswith("Quality:"):
-                    quality_str = line.split(":")[1].strip().lower()
-                    if quality_str in ["low", "medium", "high"]:
-                        quality = quality_str
+                        quality = "medium"
+            
+            # Remove duplicates while preserving order
+            tags = list(dict.fromkeys(tags))[:3]
             
             # PROGRAMMATIC SCORING based on tags
             if is_excluded:
