@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     # OpenRouter Configuration
     openrouter_api_key: str = ""
-    openrouter_model: str = "openrouter/auto"
+    openrouter_model: str = "openrouter/free"
     openrouter_timeout: int = 60
     
     # Application Configuration
