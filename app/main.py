@@ -220,7 +220,7 @@ async def preferences_page(request: Request):
             "request": request,
             "preferences": prefs,
             "dark_mode": dark_mode,
-            "model_name": settings.ollama_model
+            "model_name": settings.openrouter_model if settings.llm_provider == "openrouter" else settings.ollama_model
         }
     )
 

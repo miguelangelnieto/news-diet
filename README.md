@@ -1,17 +1,17 @@
 # 📰 News Diet
 
-**An AI-powered RSS news aggregator inspired by Google Reader** — Self-hosted, privacy-focused, and optimized for CPU-only environments.
+**An AI-powered RSS news aggregator inspired by Google Reader** — Self-hosted, privacy-focused, and optimized for both local and cloud-based AI processing.
 
 ## 🌟 Features
 
-- **🤖 Local AI Filtering**: Uses Ollama with `qwen2.5:3b` to score article relevance (0-10) based on your interests
+- **🤖 Flexible AI Filtering**: Supports **Ollama** (local) and **OpenRouter** (cloud) to score article relevance (0-10) based on your interests
 - **📡 RSS Feed Management**: Web UI to add, enable/disable, and manage RSS feeds
 - **⚙️ Customizable Preferences**: Configure topics of interest and exclusions for personalized AI scoring
 - **🎨 Catppuccin Theme**: Beautiful pastel color scheme with Latte (light) and Frappé (dark) variants
 - **🌙 Dark Mode**: Toggle between light and dark themes with persistent preference
 - **📝 AI Summaries**: Automatic article summarization and tagging
 - **🔄 Automatic Fetching**: Background scheduler checks feeds every hour
-- **💻 CPU-Optimized**: Designed for mini PCs and home labs without GPU requirements
+- **💻 Resource Efficient**: Designed to run on everything from mini PCs (local LLMs) to cloud-connected environments
 - **📱 Mobile Responsive**: Works on desktop and mobile devices
 
 ## 🖼️ Screenshots
@@ -49,43 +49,36 @@
 ## 📋 Requirements
 
 ### Hardware
-- **Minimum**: 8GB RAM, dual-core CPU
-- **Recommended**: 16GB RAM, quad-core CPU
-- **GPU**: Not required (CPU-only inference)
+- **Local AI (Ollama)**: 8GB+ RAM, quad-core CPU recommended.
+- **Cloud AI (OpenRouter)**: Minimal requirements; works on low-power devices.
+- **GPU**: Optional. Optimized for CPU-only local inference.
 
 ### Software
 - Docker & Docker Compose
-- 5GB free disk space (for Ollama model)
+- Disk space: 5GB (if using local Ollama models)
 
 ## 🚀 Quick Start
 
-### Requirements Check
+### 1. Configure Environment
 
-This project works with both Docker and Podman:
-- **Docker**: Use `docker compose up -d`
-- **Podman**: Use `podman-compose up -d` (install with `pip install podman-compose`)
-
-### 1. Clone the Repository
-
-```bash
-git clone <your-repo-url>
-cd news-diet
-```
-
-### 2. Configure Environment (Optional)
-
-Copy the example environment file and customize if needed:
+Copy the example environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-Default settings work out of the box. Key configurations:
-- `OLLAMA_MODEL=qwen2.5:3b` (recommended for CPU)
-- `RSS_FETCH_INTERVAL_HOURS=1` (fetch frequency)
-- `OLLAMA_TIMEOUT=120` (seconds, important for CPU inference)
+Choose your AI provider in `.env`:
 
-### 3. Start the Application
+**Option A: Local (Ollama)**
+- `LLM_PROVIDER=ollama`
+- `Ollama` will automatically download `qwen2.5:3b` on first startup.
+
+**Option B: Cloud (OpenRouter)**
+- `LLM_PROVIDER=openrouter`
+- `OPENROUTER_API_KEY=your_key_here`
+- `OPENROUTER_MODEL=openrouter/free` (or any other model)
+
+### 2. Start the Application
 
 **With Docker:**
 ```bash
@@ -136,17 +129,15 @@ http://localhost:8000
 - **Topics to Exclude**: Filter out unwanted topics (e.g., "Crypto, NFT")
 - **Minimum Relevance Score**: Articles below this threshold are automatically hidden
 
-**How AI Scoring Works (Hybrid Approach):**
+**How AI Scoring Works:**
 1. Article is fetched from RSS feed
-2. Local LLM extracts relevant topic tags from your interests list
-3. LLM assesses article quality (low/medium/high)
-4. System calculates score based on number of matching tags:
-   - **0 tags** → Score 1-3 (not relevant)
-   - **1 tag** → Score 4-6 (moderately relevant)
-   - **2 tags** → Score 6-8 (highly relevant)
-   - **3+ tags** → Score 8-10 (exceptional)
-5. Quality modifier adjusts score within the range
-6. Generates 3-4 sentence summary in original language
+2. AI extracts relevant topic tags from your interests list
+3. AI assigns a relevance score (1-10) based on quality and matching interests:
+   - **9-10** → Essential match, high quality and depth
+   - **7-8** → High relevance to your interests
+   - **5-6** → Moderate relevance or general interest
+   - **1-4** → Low relevance or matching excluded topics
+4. Generates a 4-sentence summary in the article's original language
 
 ## 🏗️ Architecture
 
@@ -335,6 +326,7 @@ MIT License - See LICENSE file for details
 
 - **Google Reader**: For setting the gold standard in RSS readers
 - **Ollama**: For making local LLMs accessible
+- **OpenRouter**: For providing flexible cloud-based LLM options
 - **FastAPI**: For the excellent async framework
 - **HTMX**: For simplifying dynamic UIs
 

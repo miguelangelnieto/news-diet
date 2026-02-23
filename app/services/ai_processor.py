@@ -1,6 +1,7 @@
 import asyncio
 import httpx
 import logging
+import re
 from openai import AsyncOpenAI, APIConnectionError, APITimeoutError
 from app.config import settings
 from app.models import UserPreferences
@@ -10,16 +11,31 @@ logger = logging.getLogger(__name__)
 
 class AIProcessor:
     def __init__(self):
-        self.client = AsyncOpenAI(
-            base_url=settings.ollama_base_url,
-            api_key="not-needed",  # Ollama doesn't require API key
-            timeout=settings.ollama_timeout,
-            http_client=httpx.AsyncClient(timeout=settings.ollama_timeout)
-        )
-        self.model = settings.ollama_model
+        # Configure client based on provider
+        if settings.llm_provider == "openrouter":
+            self.client = AsyncOpenAI(
+                base_url="https://openrouter.ai/api/v1",
+                api_key=settings.openrouter_api_key,
+                timeout=settings.openrouter_timeout,
+                http_client=httpx.AsyncClient(timeout=settings.openrouter_timeout)
+            )
+            self.model = settings.openrouter_model
+        else:
+            # Default to Ollama
+            self.client = AsyncOpenAI(
+                base_url=settings.ollama_base_url,
+                api_key="not-needed",
+                timeout=settings.ollama_timeout,
+                http_client=httpx.AsyncClient(timeout=settings.ollama_timeout)
+            )
+            self.model = settings.ollama_model
     
     async def ensure_model_available(self) -> bool:
-        """Check if model is pulled, pull it if not. Returns True if ready."""
+        """Check if model is pulled, pull it if not. Returns True if ready. 
+        Only applicable for local Ollama deployments."""
+        if settings.llm_provider != "ollama":
+            return True
+            
         try:
             # Check if model exists via Ollama API
             ollama_url = settings.ollama_base_url.replace("/v1", "")
@@ -61,26 +77,26 @@ class AIProcessor:
         """Generate exactly 4 informative sentences in the article's original language."""
         try:
             prompt = f"""Summarize this news article in EXACTLY 4 informative sentences. 
-Include only the key facts and main points.
+Include only the key facts, developments, and main points.
 
 IMPORTANT: 
-- Write the summary in the SAME LANGUAGE as the original article.
-- NO PREAMBLE like "Here is a summary". Start directly.
-- DO NOT exceed 4 sentences.
+- Language: ALWAYS write the summary in the SAME LANGUAGE as the original article.
+- Structure: Start directly, NO preamble (e.g., "This article describes...", "Summary:").
+- Constraint: DO NOT exceed 4 sentences. Make each sentence high-signal.
 
 Title: {title}
-Content: {content[:1000]}
+Content: {content[:1500]}
 
 Summary:"""
             
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are a concise tech news summarizer. Output EXACTLY 4 sentences. NO introduction or meta-commentary. ALWAYS use the same language as the input article."},
+                    {"role": "system", "content": "You are a professional news editor. You produce high-signal, concise summaries. ALWAYS use the same language as the input article. Output EXACTLY 4 sentences."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.3,
-                max_tokens=250
+                max_tokens=350
             )
             
             summary = response.choices[0].message.content.strip()
@@ -101,10 +117,11 @@ Summary:"""
                     break
             
             # Final safety check: if LLM ignored the 4-sentence limit, we take the first 4.
-            # This prevents UI layout shifts.
             sentences = [s.strip() for s in summary.split('.') if s.strip()]
             if len(sentences) > 4:
                 summary = '. '.join(sentences[:4]) + '.'
+            elif len(sentences) > 0 and not summary.endswith('.'):
+                summary += '.'
             
             return summary
             
@@ -122,63 +139,61 @@ Summary:"""
         preferences: UserPreferences
     ) -> tuple[int, list[str]]:
         """
-        Hybrid scoring: AI extracts topic tags, code calculates score.
+        Hybrid scoring: AI extracts tags and suggests a score based on a rubric.
         
-        Small LLMs struggle with consistent numeric scoring, so we use a hybrid approach:
-        - AI identifies matching topics (what it's good at)
-        - Code assigns score based on tag count (reliable and predictable)
-        
-        Scoring: 0 tags=1-3, 1 tag=4-6, 2 tags=6-8, 3+ tags=8-10.
-        Quality assessment (low/medium/high) adjusts within range.
+        Rubric:
+        - 1-2: Irrelevant or purely promotional/spam.
+        - 3-4: Tangentially related, low interest.
+        - 5-6: Generally related to user interests but not a perfect match.
+        - 7-8: Directly matches one or more interests, good quality.
+        - 9-10: Perfect match, high-signal, must-read for the user.
         """
         try:
-            # Build context from user preferences
             interests_list = preferences.interests if preferences.interests else []
-            interests_str = ", ".join(interests_list) if interests_list else "general tech news"
+            interests_str = ", ".join(interests_list) if interests_list else "general topics"
             exclude_str = ", ".join(preferences.exclude_topics) if preferences.exclude_topics else "none"
             
-            # Improved prompt with Chain-of-Thought to help small models
-            prompt = f"""Analyze this article.
+            prompt = f"""Analyze this news article for relevance against the user's interests.
 
-ALLOWED TOPICS: {interests_str}
+USER INTERESTS: {interests_str}
 EXCLUDED TOPICS: {exclude_str}
 
 ARTICLE:
 Title: {title}
-Content: {content[:1000]}
+Content: {content[:1500]}
 
-INSTRUCTIONS:
-1. Is the article PRIMARILY about any "ALLOWED TOPICS"? (ignore minor mentions)
-2. Is it about "EXCLUDED TOPICS"?
-3. Assess quality (depth, facts).
+QUALITY CRITERIA:
+- High Quality: In-depth analysis, primary sources, original reporting, and detailed facts.
+- Low Quality: Clickbait, purely promotional/PR content, shallow summaries, or heavy bias.
+
+SCORING RUBRIC (1-10 scale):
+10: Essential. Perfect match for multiple interests, high quality and depth.
+8: High Relevance. Solidly covers at least one interest.
+6: Moderate. Generally related to user interests but not a perfect match.
+4: Low. Tangentially related or low quality.
+1: Irrelevant or Excluded. Matches excluded topics or is spam/ad.
 
 OUTPUT FORMAT:
-Reasoning: <1 short sentence explaining why it matches a topic or is excluded>
-Tags: <comma_separated_matches_from_allowed_list_ONLY>
-Quality: <low|medium|high>
-
-EXAMPLE:
-Reasoning: The article discusses a new Python feature, which matches the 'Python' interest.
-Tags: Python
-Quality: high
+Reasoning: <1 short sentence>
+Tags: <comma_separated_matches_from_USER_INTERESTS_list_ONLY>
+Score: <integer_1_to_10>
 """
             
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are a strict classifier. You ONLY select tags from the ALLOWED TOPICS list. If no exact match, return empty tags."},
+                    {"role": "system", "content": "You are a strict and objective news classifier. You ONLY select tags from the USER INTERESTS list. Be objective and critical in your scoring."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.1, # Lower temperature for more deterministic results
-                max_tokens=150
+                temperature=0.1,
+                max_tokens=200
             )
             
             result = response.choices[0].message.content.strip()
             
-            # Parse tags with improved robustness
+            # Parse result
             tags = []
-            quality = "medium"
-            is_excluded = False
+            ai_score = 5
             
             # Case-insensitive lookup map
             interests_map = {i.lower(): i for i in interests_list}
@@ -187,71 +202,44 @@ Quality: high
                 line = line.strip()
                 if line.lower().startswith("tags:"):
                     tags_part = line.split(":", 1)[1].strip()
-                    
-                    if "excluded" in tags_part.lower():
-                        is_excluded = True
+                    if "excluded" in tags_part.lower() or "none" in tags_part.lower():
                         tags = []
-                        continue
-                        
-                    # Split by comma and clean up
-                    raw_candidates = [t.strip().strip("[]\"'") for t in tags_part.split(",")]
-                    
-                    for raw in raw_candidates:
-                        raw_lower = raw.lower()
-                        # Strict matching against interests list
-                        if raw_lower in interests_map:
-                            tags.append(interests_map[raw_lower])
-                            
-                elif line.lower().startswith("quality:"):
-                    quality_part = line.split(":", 1)[1].strip().lower()
-                    if "high" in quality_part:
-                        quality = "high"
-                    elif "low" in quality_part:
-                        quality = "low"
                     else:
-                        quality = "medium"
+                        raw_candidates = [t.strip().strip("[]\"'") for t in tags_part.split(",")]
+                        for raw in raw_candidates:
+                            if raw.lower() in interests_map:
+                                tags.append(interests_map[raw.lower()])
+                            
+                elif line.lower().startswith("score:"):
+                    score_part = line.split(":", 1)[1].strip()
+                    try:
+                        # Extract first number found in the score line
+                        match = re.search(r'(\d+)', score_part)
+                        if match:
+                            ai_score = int(match.group(1))
+                    except ValueError:
+                        pass
             
-            # Remove duplicates while preserving order
+            # Final scoring logic:
+            # If no specific interests matched, we force the score to be low (max 3),
+            # regardless of how "good" the AI thinks the article is.
             tags = list(dict.fromkeys(tags))[:3]
             
-            # PROGRAMMATIC SCORING based on tags
-            if is_excluded:
-                # Article is about excluded topic
-                score = 0
-            elif len(tags) == 0:
-                # No matching interests - low relevance
-                if quality == "high":
-                    score = 3  # Maybe tangentially interesting
-                elif quality == "medium":
-                    score = 2
-                else:
-                    score = 1
-            elif len(tags) == 1:
-                # One matching interest - moderate relevance
-                if quality == "high":
-                    score = 6  # Good coverage of one interest
-                elif quality == "medium":
-                    score = 5  # Standard coverage
-                else:
-                    score = 4  # Superficial coverage
-            elif len(tags) == 2:
-                # Two matching interests - high relevance
-                if quality == "high":
-                    score = 8  # Excellent multi-topic article
-                elif quality == "medium":
-                    score = 7  # Good multi-topic coverage
-                else:
-                    score = 6  # Multiple topics but shallow
-            else:  # 3+ tags
-                # Three+ matching interests - exceptional relevance
-                if quality == "high":
-                    score = 10  # Perfect match
-                elif quality == "medium":
-                    score = 9  # Excellent coverage
-                else:
-                    score = 8  # Good but not deep
+            if len(tags) == 0:
+                # No interests matched -> Low relevance (max 3)
+                final_score = min(ai_score, 3)
+            elif len(tags) > 0 and ai_score < 4:
+                # Interests matched but AI scored it very low (likely poor quality)
+                # We trust the AI's quality assessment here.
+                final_score = ai_score
+            else:
+                # Trust the AI score for matched interests
+                final_score = ai_score
+                
+            # Clamp between 0 and 10
+            final_score = max(0, min(10, final_score))
             
-            return score, tags
+            return final_score, tags
             
         except (APIConnectionError, APITimeoutError) as e:
             logger.warning(f"AI service unavailable for scoring: {e}")
