@@ -144,13 +144,13 @@ Summary:"""
         Rubric:
         - 1-2: Irrelevant or purely promotional/spam.
         - 3-4: Tangentially related, low interest.
-        - 5-6: Generally related to tech but not specifically in interests.
+        - 5-6: Generally related to user interests but not a perfect match.
         - 7-8: Directly matches one or more interests, good quality.
         - 9-10: Perfect match, high-signal, must-read for the user.
         """
         try:
             interests_list = preferences.interests if preferences.interests else []
-            interests_str = ", ".join(interests_list) if interests_list else "general tech news"
+            interests_str = ", ".join(interests_list) if interests_list else "general topics"
             exclude_str = ", ".join(preferences.exclude_topics) if preferences.exclude_topics else "none"
             
             prompt = f"""Analyze this news article for relevance against the user's interests.
@@ -163,9 +163,9 @@ Title: {title}
 Content: {content[:1500]}
 
 SCORING RUBRIC (1-10 scale):
-10: Essential. Perfect match for multiple interests, high technical depth.
+10: Essential. Perfect match for multiple interests, high quality and depth.
 8: High Relevance. Solidly covers at least one interest.
-6: Moderate. Generally tech-related but not a perfect match.
+6: Moderate. Generally related to user interests but not a perfect match.
 4: Low. Tangentially related or low quality.
 1: Irrelevant or Excluded. Matches excluded topics or is spam/ad.
 
@@ -178,7 +178,7 @@ Score: <integer_1_to_10>
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are a strict technical news classifier. You ONLY select tags from the USER INTERESTS list. Be objective and critical in your scoring."},
+                    {"role": "system", "content": "You are a strict and objective news classifier. You ONLY select tags from the USER INTERESTS list. Be objective and critical in your scoring."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.1,
@@ -190,7 +190,6 @@ Score: <integer_1_to_10>
             # Parse result
             tags = []
             ai_score = 5
-            is_excluded = False
             
             # Case-insensitive lookup map
             interests_map = {i.lower(): i for i in interests_list}
@@ -205,7 +204,7 @@ Score: <integer_1_to_10>
                         raw_candidates = [t.strip().strip("[]\"'") for t in tags_part.split(",")]
                         for raw in raw_candidates:
                             if raw.lower() in interests_map:
-                                tags.append(interests_map[raw.lower()])
+                                tags.append(interests_map[raw_lower])
                             
                 elif line.lower().startswith("score:"):
                     score_part = line.split(":", 1)[1].strip()
@@ -223,7 +222,7 @@ Score: <integer_1_to_10>
             
             if len(tags) == 0 and ai_score > 6:
                 # If no specific interests matched but score is high, 
-                # maybe it's generally good tech news. Moderate it slightly.
+                # maybe it's generally good news. Moderate it slightly.
                 final_score = 5
             elif len(tags) > 0 and ai_score < 6:
                 # If interests matched but AI scored it low, trust the AI (maybe poor quality).
