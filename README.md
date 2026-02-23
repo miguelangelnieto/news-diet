@@ -71,7 +71,7 @@ Choose your AI provider in `.env`:
 
 **Option A: Local (Ollama)**
 - `LLM_PROVIDER=ollama`
-- `Ollama` will automatically download `qwen2.5:3b` on first startup.
+- The app will automatically download `qwen2.5:3b` on first startup.
 
 **Option B: Cloud (OpenRouter)**
 - `LLM_PROVIDER=openrouter`
