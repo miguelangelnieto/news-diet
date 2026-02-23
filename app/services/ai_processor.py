@@ -153,31 +153,30 @@ Summary:"""
             interests_str = ", ".join(interests_list) if interests_list else "general topics"
             exclude_str = ", ".join(preferences.exclude_topics) if preferences.exclude_topics else "none"
             
-            prompt = f"""Analyze this news article for relevance against the user's interests.
+            prompt = f"""Analyze this news article and rate its relevance to the user's interests.
 
 USER INTERESTS: {interests_str}
 EXCLUDED TOPICS: {exclude_str}
 
-ARTICLE:
-Title: {title}
-Content: {content[:1500]}
+ARTICLE TITLE: {title}
+ARTICLE CONTENT: {content[:1500]}
 
-QUALITY CRITERIA:
-- High Quality: In-depth analysis, primary sources, original reporting, and detailed facts.
-- Low Quality: Clickbait, purely promotional/PR content, shallow summaries, or heavy bias.
+Your task:
+1. Identify which USER INTERESTS match this article (if any)
+2. Assess article quality (high-quality = in-depth analysis, original reporting; low-quality = clickbait, promotional)
+3. Assign a score from 1-10
 
-SCORING RUBRIC (1-10 scale):
-10: Essential. Perfect match for multiple interests, high quality and depth.
-8: High Relevance. Solidly covers at least one interest.
-6: Moderate. Generally related to user interests but not a perfect match.
-4: Low. Tangentially related or low quality.
-1: Irrelevant or Excluded. Matches excluded topics or is spam/ad.
+SCORING SCALE:
+10 = Perfect match for multiple interests + high quality
+8 = Strong match for at least one interest + good quality  
+6 = Generally related but not perfect match
+4 = Weak connection or low quality
+1 = Irrelevant or matches excluded topics
 
-OUTPUT FORMAT:
-Reasoning: <1 short sentence>
-Tags: <comma_separated_matches_from_USER_INTERESTS_list_ONLY>
-Score: <integer_1_to_10>
-"""
+Respond in this exact format:
+Reasoning: <one sentence explaining your rating>
+Tags: <list only matching interests from USER INTERESTS, or "none">
+Score: <number from 1 to 10>"""
             
             response = await self.client.chat.completions.create(
                 model=self.model,
@@ -185,40 +184,38 @@ Score: <integer_1_to_10>
                     {"role": "system", "content": "You are a strict and objective news classifier. You ONLY select tags from the USER INTERESTS list. Be objective and critical in your scoring."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.1,
-                max_tokens=200
+                temperature=0.3,
+                max_tokens=400
             )
             
             result = response.choices[0].message.content.strip()
             
-            # Parse result
+            # Parse result - more robust parsing for smaller models
             tags = []
             ai_score = 5
             
             # Case-insensitive lookup map
             interests_map = {i.lower(): i for i in interests_list}
             
-            for line in result.split("\n"):
-                line = line.strip()
-                if line.lower().startswith("tags:"):
-                    tags_part = line.split(":", 1)[1].strip()
-                    if "excluded" in tags_part.lower() or "none" in tags_part.lower():
-                        tags = []
-                    else:
-                        raw_candidates = [t.strip().strip("[]\"'") for t in tags_part.split(",")]
-                        for raw in raw_candidates:
-                            if raw.lower() in interests_map:
-                                tags.append(interests_map[raw.lower()])
-                            
-                elif line.lower().startswith("score:"):
-                    score_part = line.split(":", 1)[1].strip()
-                    try:
-                        # Extract first number found in the score line
-                        match = re.search(r'(\d+)', score_part)
-                        if match:
-                            ai_score = int(match.group(1))
-                    except ValueError:
-                        pass
+            # Try to extract score first (look anywhere in text)
+            score_match = re.search(r'(?:score|rating):\s*(\d+)', result.lower())
+            if score_match:
+                try:
+                    ai_score = int(score_match.group(1))
+                except ValueError:
+                    pass
+            
+            # Extract tags (look anywhere in text)
+            tags_match = re.search(r'tags?:\s*([^\n]+)', result.lower())
+            if tags_match:
+                tags_part = tags_match.group(1).strip()
+                if "excluded" not in tags_part.lower() and "none" not in tags_part.lower():
+                    # Split by commas, semicolons, or "and"
+                    raw_candidates = re.split(r'[,;]|\s+and\s+', tags_part)
+                    for raw in raw_candidates:
+                        cleaned = raw.strip().strip("[]\"'()").lower()
+                        if cleaned in interests_map:
+                            tags.append(interests_map[cleaned])
             
             # Final scoring logic:
             # If no specific interests matched, we force the score to be low (max 3),
