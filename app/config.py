@@ -2,14 +2,18 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    # MongoDB Configuration
-    mongodb_url: str = "mongodb://mongo:27017"
-    mongodb_db: str = "newsdiet"
+    # LLM Provider Configuration
+    llm_provider: str = "ollama"  # options: "ollama", "openrouter"
     
     # Ollama Configuration
     ollama_base_url: str = "http://ollama:11434/v1"
     ollama_model: str = "qwen2.5:3b"
     ollama_timeout: int = 120
+
+    # OpenRouter Configuration
+    openrouter_api_key: str = ""
+    openrouter_model: str = "google/gemini-2.0-flash-exp:free"
+    openrouter_timeout: int = 60
     
     # Application Configuration
     app_host: str = "0.0.0.0"
