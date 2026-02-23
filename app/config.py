@@ -2,6 +2,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    # MongoDB Configuration
+    mongodb_url: str = "mongodb://mongo:27017"
+    mongodb_db: str = "newsdiet"
+    
     # LLM Provider Configuration
     llm_provider: str = "ollama"  # options: "ollama", "openrouter"
     
