@@ -162,6 +162,10 @@ ARTICLE:
 Title: {title}
 Content: {content[:1500]}
 
+QUALITY CRITERIA:
+- High Quality: In-depth analysis, primary sources, original reporting, and detailed facts.
+- Low Quality: Clickbait, purely promotional/PR content, shallow summaries, or heavy bias.
+
 SCORING RUBRIC (1-10 scale):
 10: Essential. Perfect match for multiple interests, high quality and depth.
 8: High Relevance. Solidly covers at least one interest.
