@@ -42,13 +42,13 @@ services:
     environment:
       MONGODB_URL: mongodb://mongo:27017
       MONGODB_DB: newsdiet
-      LLM_PROVIDER: ollama
-      OLLAMA_BASE_URL: http://ollama:11434/v1
-      OLLAMA_MODEL: qwen2.5:3b
-      OLLAMA_TIMEOUT: 120
-      OPENROUTER_API_KEY: ""
-      OPENROUTER_MODEL: "google/gemini-2.0-flash-exp:free"
-      OPENROUTER_TIMEOUT: 60
+      LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434/v1}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:3b}
+      OLLAMA_TIMEOUT: ${OLLAMA_TIMEOUT:-120}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openrouter/auto}
+      OPENROUTER_TIMEOUT: ${OPENROUTER_TIMEOUT:-60}
       RSS_FETCH_INTERVAL_HOURS: 1
       LOG_LEVEL: INFO
     depends_on:

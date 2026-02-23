@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     # OpenRouter Configuration
     openrouter_api_key: str = ""
-    openrouter_model: str = "google/gemini-2.0-flash-exp:free"
+    openrouter_model: str = "openrouter/auto"
     openrouter_timeout: int = 60
     
     # Application Configuration
