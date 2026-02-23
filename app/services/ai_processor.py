@@ -204,7 +204,7 @@ Score: <integer_1_to_10>
                         raw_candidates = [t.strip().strip("[]\"'") for t in tags_part.split(",")]
                         for raw in raw_candidates:
                             if raw.lower() in interests_map:
-                                tags.append(interests_map[raw_lower])
+                                tags.append(interests_map[raw.lower()])
                             
                 elif line.lower().startswith("score:"):
                     score_part = line.split(":", 1)[1].strip()
@@ -216,18 +216,20 @@ Score: <integer_1_to_10>
                     except ValueError:
                         pass
             
-            # Final scoring logic: we trust the AI score more for larger models, 
-            # but we still cap it based on tags for consistency if no interests matched.
+            # Final scoring logic:
+            # If no specific interests matched, we force the score to be low (max 3),
+            # regardless of how "good" the AI thinks the article is.
             tags = list(dict.fromkeys(tags))[:3]
             
-            if len(tags) == 0 and ai_score > 6:
-                # If no specific interests matched but score is high, 
-                # maybe it's generally good news. Moderate it slightly.
-                final_score = 5
-            elif len(tags) > 0 and ai_score < 6:
-                # If interests matched but AI scored it low, trust the AI (maybe poor quality).
+            if len(tags) == 0:
+                # No interests matched -> Low relevance (max 3)
+                final_score = min(ai_score, 3)
+            elif len(tags) > 0 and ai_score < 4:
+                # Interests matched but AI scored it very low (likely poor quality)
+                # We trust the AI's quality assessment here.
                 final_score = ai_score
             else:
+                # Trust the AI score for matched interests
                 final_score = ai_score
                 
             # Clamp between 0 and 10
