@@ -173,31 +173,28 @@
         </h3>
         <div class="text-sm text-latte-text dark:text-frappe-text space-y-3">
             <p>
-                <strong class="text-latte-subtext1 dark:text-frappe-subtext1">Hybrid Scoring System:</strong> 
-                The AI extracts relevant topic tags from your interests list, then the system calculates a score:
+                <strong class="text-latte-subtext1 dark:text-frappe-subtext1">AI Scoring System:</strong> 
+                The AI analyzes articles based on your interests and assigns a relevance score from 1 to 10:
             </p>
             <ul class="list-disc list-inside ml-4 space-y-1 text-latte-subtext0 dark:text-frappe-subtext0">
-                <li><strong>0 tags:</strong> Score 1-3 (not relevant)</li>
-                <li><strong>1 tag:</strong> Score 4-6 (moderately relevant)</li>
-                <li><strong>2 tags:</strong> Score 6-8 (highly relevant)</li>
-                <li><strong>3+ tags:</strong> Score 8-10 (exceptional)</li>
+                <li><strong>9-10:</strong> Perfect match, high technical depth.</li>
+                <li><strong>7-8:</strong> High relevance to your interests.</li>
+                <li><strong>5-6:</strong> Moderate relevance or general tech news.</li>
+                <li><strong>1-4:</strong> Low relevance or matching excluded topics.</li>
             </ul>
-            <p class="mt-2 text-xs">
-                Quality assessment (low/medium/high) fine-tunes the score within each range.
-            </p>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2 mt-2">
                 <strong class="text-latte-subtext1 dark:text-frappe-subtext1">Color Coding:</strong>
-                <span class="px-2.5 py-1 bg-latte-green/20 dark:bg-frappe-green/20 text-latte-green dark:text-frappe-green text-xs font-medium rounded-lg">Green (8-10)</span>
-                <span class="px-2.5 py-1 bg-latte-yellow/20 dark:bg-frappe-yellow/20 text-latte-yellow dark:text-frappe-yellow text-xs font-medium rounded-lg">Yellow (5-7)</span>
-                <span class="px-2.5 py-1 bg-latte-overlay0/20 dark:bg-frappe-overlay0/20 text-latte-overlay0 dark:text-frappe-overlay0 text-xs font-medium rounded-lg">Gray (0-4)</span>
+                <span class="px-2.5 py-1 bg-latte-green/20 dark:bg-frappe-green/20 text-latte-green dark:text-frappe-green text-xs font-medium rounded-lg">High (8-10)</span>
+                <span class="px-2.5 py-1 bg-latte-yellow/20 dark:bg-frappe-yellow/20 text-latte-yellow dark:text-frappe-yellow text-xs font-medium rounded-lg">Medium (5-7)</span>
+                <span class="px-2.5 py-1 bg-latte-overlay0/20 dark:bg-frappe-overlay0/20 text-latte-overlay0 dark:text-frappe-overlay0 text-xs font-medium rounded-lg">Low (0-4)</span>
             </div>
             <p>
-                <strong class="text-latte-subtext1 dark:text-frappe-subtext1">Processing Time:</strong> 
-                Since we're using CPU-only inference (no GPU), article processing takes a bit longer. This is normal!
+                <strong class="text-latte-subtext1 dark:text-frappe-subtext1">Processing:</strong> 
+                Articles are processed in the background. Processing time depends on the AI provider and model size.
             </p>
             <p>
-                <strong class="text-latte-subtext1 dark:text-frappe-subtext1">Model:</strong> 
-                <code class="px-2 py-0.5 bg-latte-surface0 dark:bg-frappe-surface0 rounded text-xs">{{ model_name }}</code> — optimized for CPU-only inference.
+                <strong class="text-latte-subtext1 dark:text-frappe-subtext1">Active Model:</strong> 
+                <code class="px-2 py-0.5 bg-latte-surface0 dark:bg-frappe-surface0 rounded text-xs">{{ model_name }}</code>
             </p>
         </div>
     </div>
