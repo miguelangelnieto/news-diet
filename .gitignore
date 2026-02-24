@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 *.pyo
 .env
+docker-compose.yml
 *.egg-info/
 dist/
 build/

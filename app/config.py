@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     
     # Ollama Configuration
     ollama_base_url: str = "http://ollama:11434/v1"
-    ollama_model: str = "qwen2.5:3b"
+    ollama_model: str = "gemma3n:e4b"
     ollama_timeout: int = 120
 
     # OpenRouter Configuration
