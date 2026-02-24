@@ -78,6 +78,12 @@ Choose your AI provider in `.env`:
 - `OPENROUTER_API_KEY=your_key_here`
 - `OPENROUTER_MODEL=openrouter/free` (or any other model)
 
+Copy the example docker compose file:
+
+```bash
+cp docker-compose.yml.example docker-compose.yml
+```
+
 ### 2. Start the Application
 
 **With Docker:**
