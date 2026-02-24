@@ -1,3 +1,4 @@
+import re
 import feedparser
 import ipaddress
 import logging
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 # Constants
 FEED_FETCH_TIMEOUT = 30  # seconds
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 
 # Tags and attributes allowed in sanitized article HTML
 _ALLOWED_TAGS = {
@@ -105,7 +107,8 @@ class RSSFeeder:
     
     async def _fetch_feed_content(self, feed_url: str) -> str | None:
         try:
-            async with httpx.AsyncClient(timeout=FEED_FETCH_TIMEOUT) as client:
+            headers = {"User-Agent": USER_AGENT}
+            async with httpx.AsyncClient(timeout=FEED_FETCH_TIMEOUT, headers=headers) as client:
                 response = await client.get(feed_url, follow_redirects=True)
                 response.raise_for_status()
                 return response.text
@@ -125,19 +128,49 @@ class RSSFeeder:
             logger.warning(f"Blocked unsafe URL for full content fetch: {url}")
             return None
         try:
-            async with httpx.AsyncClient(timeout=FEED_FETCH_TIMEOUT) as client:
+            headers = {"User-Agent": USER_AGENT}
+            async with httpx.AsyncClient(timeout=FEED_FETCH_TIMEOUT, headers=headers) as client:
                 response = await client.get(url, follow_redirects=True)
                 response.raise_for_status()
                 
-                downloaded = response.text
+                html = response.text
+                
+                # 1. Primary extraction with favor_precision (fixes duplication on Phoronix and similar)
                 result = trafilatura.extract(
-                    downloaded,
+                    html,
                     include_links=True,
                     include_images=False,
                     include_comments=False,
-                    output_format='html'
+                    output_format='html',
+                    favor_precision=True
                 )
-                logger.info(f"Extracted content from {url}: {result}")
+                
+                # 2. Heuristic for fragmented content (e.g. Ars Technica)
+                # If extraction is short but we detect multiple content blocks, try reconstruction
+                if result and len(result) < 3000:
+                    soup = BeautifulSoup(html, 'html.parser')
+                    # Look for common article content classes that might be fragmented
+                    content_divs = soup.find_all('div', class_=re.compile(r'post-content|article-body|entry-content|article-text|story-content'))
+                    
+                    if len(content_divs) > 1:
+                        logger.info(f"Detected potential fragmented content ({len(content_divs)} divs) at {url}, attempting reconstruction")
+                        reconstructed_html = "<html><body>"
+                        for div in content_divs:
+                            reconstructed_html += str(div)
+                        reconstructed_html += "</body></html>"
+                        
+                        better_result = trafilatura.extract(
+                            reconstructed_html,
+                            include_links=True,
+                            include_images=False,
+                            include_comments=False,
+                            output_format='html',
+                            favor_precision=True
+                        )
+                        if better_result and len(better_result) > len(result):
+                            result = better_result
+
+                logger.info(f"Extracted content from {url} (length: {len(result) if result else 0})")
                 return self._sanitize_html(result) if result else None
         except Exception as e:
             logger.warning(f"Error extracting full content from {url}: {e}")
