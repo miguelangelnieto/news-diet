@@ -71,7 +71,7 @@ Choose your AI provider in `.env`:
 
 **Option A: Local (Ollama)**
 - `LLM_PROVIDER=ollama`
-- The app will automatically download `qwen2.5:3b` on first startup.
+- The app will automatically download `gemma3n:e4b` on first startup.
 
 **Option B: Cloud (OpenRouter)**
 - `LLM_PROVIDER=openrouter`
@@ -93,7 +93,7 @@ podman kube play docker-compose.yml
 ```
 
 **First-time setup notes:**
-- Ollama will automatically download the `qwen2.5:3b` model (~2GB) on first startup
+- Ollama will automatically download the `gemma3n:e4b` model (~2GB) on first startup
 - This can take 5-10 minutes depending on your internet connection
 - The app will be ready once all services are healthy
 
@@ -184,7 +184,7 @@ news-diet/
 | `MONGODB_URL` | `mongodb://mongo:27017` | MongoDB connection string |
 | `MONGODB_DB` | `newsdiet` | Database name |
 | `OLLAMA_BASE_URL` | `http://ollama:11434/v1` | Ollama API endpoint |
-| `OLLAMA_MODEL` | `qwen2.5:3b` | LLM model to use |
+| `OLLAMA_MODEL` | `gemma3n:e4b` | LLM model to use |
 | `OLLAMA_TIMEOUT` | `120` | Request timeout (seconds) |
 | `RSS_FETCH_INTERVAL_HOURS` | `1` | How often to check feeds |
 | `DELETE_ARTICLES_ON_FEED_REMOVAL` | `true` | Delete articles when feed is removed |
@@ -192,7 +192,12 @@ news-diet/
 
 ### Model Selection
 
-**Recommended: `qwen2.5:3b`** (default)
+**Recommended: `gemma3n:e4b`** (default)
+- Size: ~2GB
+- Fast and accurate for classification
+- Best performance-to-size ratio
+
+**Alternative: `qwen2.5:3b`**
 - Size: ~2GB
 - Fast on CPU
 - Good quality summaries
@@ -217,7 +222,7 @@ news-diet/
 
 **Solution**: Check internet connection and disk space. Manually pull:
 ```bash
-docker-compose exec ollama ollama pull qwen2.5:3b
+docker-compose exec ollama ollama pull gemma3n:e4b
 ```
 
 ### Issue: "Processing takes too long"

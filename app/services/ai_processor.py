@@ -85,7 +85,7 @@ IMPORTANT:
 - Constraint: DO NOT exceed 4 sentences. Make each sentence high-signal.
 
 Title: {title}
-Content: {content[:1500]}
+Content: {content[:12000]}
 
 Summary:"""
             
@@ -133,111 +133,126 @@ Summary:"""
             return "Summary generation failed."
     
     async def score_relevance(
-        self, 
-        title: str, 
-        content: str, 
+        self,
+        title: str,
+        content: str,
         preferences: UserPreferences
     ) -> tuple[int, list[str]]:
         """
-        Hybrid scoring: AI extracts tags and suggests a score based on a rubric.
-        
-        Rubric:
-        - 1-2: Irrelevant or purely promotional/spam.
-        - 3-4: Tangentially related, low interest.
-        - 5-6: Generally related to user interests but not a perfect match.
-        - 7-8: Directly matches one or more interests, good quality.
-        - 9-10: Perfect match, high-signal, must-read for the user.
+        Scores relevance based on a simplified AI analysis and deterministic scoring logic.
+        The AI's job is to identify matching interests, excluded topics, and assess quality.
+        The final score is calculated in Python based on this analysis.
         """
         try:
             interests_list = preferences.interests if preferences.interests else []
-            interests_str = ", ".join(interests_list) if interests_list else "general topics"
+            interests_str = ", ".join(interests_list) if interests_list else "none"
             exclude_str = ", ".join(preferences.exclude_topics) if preferences.exclude_topics else "none"
-            
-            prompt = f"""Analyze this news article and rate its relevance to the user's interests.
+
+            prompt = f"""Analyze this news article against the user's preferences.
 
 USER INTERESTS: {interests_str}
 EXCLUDED TOPICS: {exclude_str}
 
 ARTICLE TITLE: {title}
-ARTICLE CONTENT: {content[:1500]}
+ARTICLE CONTENT: {content[:12000]}
 
-Your task:
-1. Identify which USER INTERESTS match this article (if any)
-2. Assess article quality (high-quality = in-depth analysis, original reporting; low-quality = clickbait, promotional)
-3. Assign a score from 1-10
+Your task is to identify three things:
+1.  Matching Interests: Which topics from USER INTERESTS are EXPLICITLY discussed in this article?
+2.  Excluded Topics: Does the article mention any EXCLUDED TOPICS?
+3.  Quality: Assess the article's quality (not its relevance). Is it High, Medium, or Low?
+    - High: In-depth analysis, original reporting.
+    - Medium: Standard news report.
+    - Low: Clickbait, promotional, shallow.
 
-SCORING SCALE:
-10 = Perfect match for multiple interests + high quality
-8 = Strong match for at least one interest + good quality  
-6 = Generally related but not perfect match
-4 = Weak connection or low quality
-1 = Irrelevant or matches excluded topics
+CRITICAL INSTRUCTIONS:
+- ONLY list interests that are explicitly mentioned and discussed.
+- If no user interests are explicitly discussed, output "none".
 
-Respond in this exact format:
-Reasoning: <one sentence explaining your rating>
-Tags: <list only matching interests from USER INTERESTS, or "none">
-Score: <number from 1 to 10>"""
-            
+Respond in this exact format, with each field on a new line:
+Tags: <list matching interests, or "none">
+Excluded: <list any excluded topics found, or "none">
+Quality: <High, Medium, or Low>"""
+
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are a strict and objective news classifier. You ONLY select tags from the USER INTERESTS list. Be objective and critical in your scoring."},
+                    {"role": "system", "content": "You are a strict news classifier. Your job is to extract topics based ONLY on explicit content. Do not infer interests that are not explicitly mentioned. Only use the provided tags."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.3,
-                max_tokens=400
+                temperature=0.1,
+                max_tokens=200
             )
-            
-            result = response.choices[0].message.content.strip()
-            
-            # Parse result - more robust parsing for smaller models
+
+            result = response.choices[0].message.content.strip().lower()
+
+            # --- Parsing Logic ---
             tags = []
-            ai_score = 5
-            
-            # Case-insensitive lookup map
+            has_excluded = False
+            quality_modifier = 0
+
+            # Case-insensitive lookup map for user interests
             interests_map = {i.lower(): i for i in interests_list}
             
-            # Try to extract score first (look anywhere in text)
-            score_match = re.search(r'(?:score|rating):\s*(\d+)', result.lower())
-            if score_match:
-                try:
-                    ai_score = int(score_match.group(1))
-                except ValueError:
-                    pass
-            
-            # Extract tags (look anywhere in text)
-            tags_match = re.search(r'tags?:\s*([^\n]+)', result.lower())
+            # 1. Parse Tags
+            tags_match = re.search(r'tags:\s*(.*)', result)
             if tags_match:
                 tags_part = tags_match.group(1).strip()
-                if "excluded" not in tags_part.lower() and "none" not in tags_part.lower():
-                    # Split by commas, semicolons, or "and"
+                if tags_part and "none" not in tags_part:
                     raw_candidates = re.split(r'[,;]|\s+and\s+', tags_part)
                     for raw in raw_candidates:
                         cleaned = raw.strip().strip("[]\"'()").lower()
                         if cleaned in interests_map:
                             tags.append(interests_map[cleaned])
             
-            # Final scoring logic:
-            # If no specific interests matched, we force the score to be low (max 3),
-            # regardless of how "good" the AI thinks the article is.
+            # 2. Parse Excluded Topics
+            excluded_match = re.search(r'excluded:\s*(.*)', result)
+            if excluded_match:
+                excluded_part = excluded_match.group(1).strip()
+                if excluded_part and "none" not in excluded_part:
+                    has_excluded = True
+
+            # 3. Parse Quality
+            quality_match = re.search(r'quality:.*?(high|medium|low)', result)
+            if quality_match:
+                quality = quality_match.group(1).strip()
+                if quality == "high":
+                    quality_modifier = 1
+                elif quality == "low":
+                    quality_modifier = -1
+
+            # --- Scoring Logic ---
+            final_score = 0
+            # Remove duplicate tags and limit to 3 for scoring
             tags = list(dict.fromkeys(tags))[:3]
-            
-            if len(tags) == 0:
-                # No interests matched -> Low relevance (max 3)
-                final_score = min(ai_score, 3)
-            elif len(tags) > 0 and ai_score < 4:
-                # Interests matched but AI scored it very low (likely poor quality)
-                # We trust the AI's quality assessment here.
-                final_score = ai_score
+
+            # If any excluded topic is present, the article is irrelevant.
+            if has_excluded:
+                final_score = 0
+                # Clear tags as they are irrelevant if topic is excluded
+                tags = []
             else:
-                # Trust the AI score for matched interests
-                final_score = ai_score
+                # Base score on number of matching interests
+                if len(tags) == 0:
+                    final_score = 1
+                elif len(tags) == 1:
+                    final_score = 5
+                elif len(tags) == 2:
+                    final_score = 8
+                elif len(tags) >= 3:
+                    final_score = 10
                 
-            # Clamp between 0 and 10
+                # Apply quality modifier
+                final_score += quality_modifier
+
+            # Clamp score to be between 0 and 10
             final_score = max(0, min(10, final_score))
             
+            # If score is 0, do not return any tags
+            if final_score == 0:
+                tags = []
+
             return final_score, tags
-            
+
         except (APIConnectionError, APITimeoutError) as e:
             logger.warning(f"AI service unavailable for scoring: {e}")
             return 5, []  # Default: medium relevance when AI unavailable

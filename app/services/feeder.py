@@ -20,8 +20,11 @@ FEED_FETCH_TIMEOUT = 30  # seconds
 # Tags and attributes allowed in sanitized article HTML
 _ALLOWED_TAGS = {
     'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    'ul', 'ol', 'li', 'a', 'strong', 'em', 'b', 'i',
-    'blockquote', 'pre', 'code', 'br',
+    'ul', 'ol', 'li', 'a', 'strong', 'em', 'b', 'i', 'u', 's', 'strike',
+    'blockquote', 'pre', 'code', 'br', 'hr',
+    'div', 'span', 'article', 'section', 'main', 'aside', 'header', 'footer',
+    'figure', 'figcaption',
+    'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'caption',
 }
 _ALLOWED_ATTRS: dict[str, list[str]] = {'a': ['href']}
 # Tags whose content should be dropped entirely (never just unwrapped)
@@ -134,6 +137,7 @@ class RSSFeeder:
                     include_comments=False,
                     output_format='html'
                 )
+                logger.info(f"Extracted content from {url}: {result}")
                 return self._sanitize_html(result) if result else None
         except Exception as e:
             logger.warning(f"Error extracting full content from {url}: {e}")

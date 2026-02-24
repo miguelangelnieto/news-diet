@@ -591,6 +591,23 @@ async def recalculate_all_scores():
 # Health Check
 # ============================================
 
+@app.get("/test-extract", response_class=HTMLResponse)
+async def test_extract(url: str):
+    """
+    Temporary test route to check trafilatura extraction for a given URL.
+    Example: /test-extract?url=https://arstechnica.com/...
+    """
+    if not url:
+        raise HTTPException(status_code=400, detail="URL parameter is required")
+
+    full_text = await rss_feeder.fetch_full_content(url)
+
+    if full_text:
+        return HTMLResponse(content=full_text)
+    else:
+        return HTMLResponse(content="<p>Could not extract content.</p>", status_code=404)
+
+
 @app.get("/health")
 async def health_check():
     return {
