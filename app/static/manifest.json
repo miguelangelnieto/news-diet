@@ -1,43 +1,24 @@
 {
   "name": "News Diet",
   "short_name": "News Diet",
-  "description": "AI-powered RSS news aggregator inspired by Google Reader",
-  "start_url": "/",
+  "description": "AI-powered RSS news aggregator",
+  "start_url": "/?v=1",
   "display": "standalone",
-  "background_color": "#eff1f5",
-  "theme_color": "#e6e9ef",
-  "orientation": "portrait-primary",
+  "background_color": "#1e1e2e",
+  "theme_color": "#1e1e2e",
   "icons": [
     {
-      "src": "/static/icon.svg",
-      "sizes": "192x192",
+      "src": "/static/icon-v1.svg",
+      "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/static/icon.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "/static/icon.svg",
-      "sizes": "192x192",
+      "src": "/static/maskable-icon-v1.svg",
+      "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"
-    },
-    {
-      "src": "/static/icon.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
-    },
-    {
-      "src": "/static/favicon.svg",
-      "sizes": "32x32",
-      "type": "image/svg+xml"
     }
   ],
-  "categories": ["news", "productivity"],
-  "screenshots": []
+  "categories": ["news", "productivity"]
 }
