@@ -1,9 +1,9 @@
 // News-Diet Service Worker
-const CACHE_NAME = 'news-diet-v2';
+const CACHE_NAME = 'news-diet-v3';
 const STATIC_ASSETS = [
   '/',
-  '/static/icon-v1.svg',
-  '/static/maskable-icon-v1.svg',
+  '/static/icon-v2.svg',
+  '/static/maskable-icon-v2.svg',
   '/static/manifest.json'
 ];
 
