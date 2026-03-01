@@ -192,7 +192,6 @@ Quality: <High, Medium, or Low>"""
             # --- Parsing Logic ---
             tags = []
             has_excluded = False
-            quality_modifier = 0
 
             # Case-insensitive lookup map for user interests
             interests_map = {i.lower(): i for i in interests_list}
@@ -215,43 +214,39 @@ Quality: <High, Medium, or Low>"""
                 if excluded_part and "none" not in excluded_part:
                     has_excluded = True
 
-            # 3. Parse Quality
-            quality_match = re.search(r'quality:.*?(high|medium|low)', result)
-            if quality_match:
-                quality = quality_match.group(1).strip()
-                if quality == "high":
-                    quality_modifier = 1
-                elif quality == "low":
-                    quality_modifier = -1
-
             # --- Scoring Logic ---
-            final_score = 0
             # Remove duplicate tags while preserving order
             tags = list(dict.fromkeys(tags))
 
-            # If any excluded topic is present, the article is irrelevant.
-            if has_excluded:
-                final_score = 0
-                # Clear tags as they are irrelevant if topic is excluded
-                tags = []
-            else:
-                # Base score on number of matching interests
-                if len(tags) == 0:
-                    final_score = 1
-                elif len(tags) == 1:
-                    final_score = 5
-                elif len(tags) == 2:
-                    final_score = 8
-                elif len(tags) >= 3:
-                    final_score = 10
-                
-                # Apply quality modifier
-                final_score += quality_modifier
+            total_interests = len(interests_list)
 
-            # Clamp score to be between 0 and 10
+            # Base score: normalized coverage of the user's interest list.
+            # When no interests are defined, fall back to a neutral mid-point.
+            if total_interests == 0:
+                base_score = 5
+            elif len(tags) == 0:
+                base_score = 1
+            else:
+                coverage = len(tags) / total_interests  # 0.0–1.0
+                base_score = round(coverage * 8) + 1    # 1–9
+
+            # Quality modifier (±2): makes quality meaningfully affect the score.
+            quality_modifier_map = {"high": 2, "low": -2}
+            quality_match = re.search(r'quality:.*?(high|medium|low)', result)
+            quality_modifier = quality_match and quality_modifier_map.get(quality_match.group(1).strip(), 0) or 0
+
+            final_score = base_score + quality_modifier
+
+            # Soft exclusion: cap score at 3 rather than forcing to 0.
+            # Strong interest matches can still surface despite a brief mention of
+            # an excluded topic; the user can lower their threshold to see them.
+            if has_excluded:
+                final_score = min(final_score, 3)
+
+            # Clamp score to [0, 10]
             final_score = max(0, min(10, final_score))
-            
-            # If score is 0, do not return any tags
+
+            # Clear tags when score is effectively zero
             if final_score == 0:
                 tags = []
 

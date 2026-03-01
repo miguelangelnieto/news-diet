@@ -174,14 +174,19 @@
         <div class="text-sm text-latte-text dark:text-frappe-text space-y-3">
             <p>
                 <strong class="text-latte-subtext1 dark:text-frappe-subtext1">AI Scoring System:</strong> 
-                The AI analyzes articles based on your interests and assigns a relevance score from 1 to 10:
+                The AI analyzes articles based on your interests and assigns a relevance score from 0 to 10.
+                The score is normalised to how many interests you have defined, so matching 2 out of 2 interests scores higher than matching 2 out of 20.
             </p>
             <ul class="list-disc list-inside ml-4 space-y-1 text-latte-subtext0 dark:text-frappe-subtext0">
-                <li><strong>9-10:</strong> Perfect match, high quality and depth.</li>
-                <li><strong>7-8:</strong> High relevance to your interests.</li>
-                <li><strong>5-6:</strong> Moderate relevance or general topics.</li>
-                <li><strong>1-4:</strong> Low relevance or matching excluded topics.</li>
+                <li><strong>9-10:</strong> Covers most of your interests and is high quality.</li>
+                <li><strong>7-8:</strong> Strong match across several of your interests.</li>
+                <li><strong>5-6:</strong> Moderate coverage or high-quality general topic.</li>
+                <li><strong>3-4:</strong> Weak match, low quality, or mentions an excluded topic.</li>
+                <li><strong>0-2:</strong> No match, very low quality, or primarily about an excluded topic.</li>
             </ul>
+            <p class="mt-1 text-latte-subtext0 dark:text-frappe-subtext0 text-sm">
+                Excluded topics cap the score at 3 rather than hiding articles entirely — lower your threshold to still see them.
+            </p>
             <div class="flex flex-wrap gap-2 mt-2">
                 <strong class="text-latte-subtext1 dark:text-frappe-subtext1">Color Coding:</strong>
                 <span class="px-2.5 py-1 bg-latte-green/20 dark:bg-frappe-green/20 text-latte-green dark:text-frappe-green text-xs font-medium rounded-lg">High (8-10)</span>
