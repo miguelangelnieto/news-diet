@@ -48,13 +48,14 @@ async def cleanup_old_articles():
 
 def start_scheduler():
     try:
-        # Schedule RSS fetch job
+        # Schedule RSS fetch job — runs immediately on startup, then every N hours
         scheduler.add_job(
             scheduled_feed_fetch,
             trigger=IntervalTrigger(hours=settings.rss_fetch_interval_hours),
             id="rss_fetch_job",
             name="Fetch RSS feeds",
-            replace_existing=True
+            replace_existing=True,
+            next_run_time=datetime.now(timezone.utc)
         )
         
         # Schedule cleanup job (runs daily)

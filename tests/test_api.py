@@ -2,14 +2,14 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
 from unittest.mock import AsyncMock, patch, MagicMock
-from datetime import datetime
+from datetime import datetime, timezone
 from bson import ObjectId
 
 
 # Mock MongoDB before importing app
 @pytest.fixture(autouse=True)
 def mock_mongodb():
-    with patch('app.database.motor_client') as mock_client:
+    with patch('app.database.client') as mock_client:
         mock_db = MagicMock()
         mock_client.__getitem__ = MagicMock(return_value=mock_db)
         yield mock_db
@@ -149,7 +149,8 @@ class TestArticlesAPI:
             transport = ASGITransport(app=app)
             async with AsyncClient(transport=transport, base_url="http://test") as client:
                 response = await client.patch(
-                    "/api/articles/invalid-id/read?is_read=true"
+                    "/api/articles/invalid-id/read",
+                    json={"is_read": True}
                 )
                 
                 assert response.status_code == 400
@@ -173,7 +174,8 @@ class TestArticlesAPI:
             transport = ASGITransport(app=app)
             async with AsyncClient(transport=transport, base_url="http://test") as client:
                 response = await client.patch(
-                    f"/api/articles/{valid_oid}/read?is_read=true"
+                    f"/api/articles/{valid_oid}/read",
+                    json={"is_read": True}
                 )
                 
                 assert response.status_code == 200

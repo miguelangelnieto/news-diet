@@ -1,6 +1,6 @@
 """Tests for Pydantic models."""
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from bson import ObjectId
 from app.models import (
     Article, ArticleCreate, ArticleResponse,
@@ -16,7 +16,7 @@ class TestArticleModels:
             url="https://example.com/article",
             title="Test Article",
             source="Test Source",
-            published_at=datetime.utcnow()
+            published_at=datetime.now(timezone.utc)
         )
         assert article.url == "https://example.com/article"
         assert article.title == "Test Article"
@@ -25,7 +25,7 @@ class TestArticleModels:
     
     def test_article_create_full(self):
         """Test creating ArticleCreate with all fields."""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         article = ArticleCreate(
             url="https://example.com/article",
             title="Test Article",
@@ -41,7 +41,7 @@ class TestArticleModels:
     
     def test_article_response(self):
         """Test ArticleResponse model."""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         response = ArticleResponse(
             id="507f1f77bcf86cd799439011",
             url="https://example.com",
@@ -84,7 +84,7 @@ class TestFeedModels:
     
     def test_feed_response(self):
         """Test FeedResponse model."""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         response = FeedResponse(
             id="507f1f77bcf86cd799439011",
             url="https://example.com/rss",
@@ -150,7 +150,7 @@ class TestPreferencesModels:
     
     def test_preferences_response(self):
         """Test PreferencesResponse model."""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         response = PreferencesResponse(
             interests=["Python", "AI"],
             exclude_topics=["Crypto"],
@@ -173,7 +173,7 @@ class TestObjectIdValidation:
             url="https://example.com",
             title="Test",
             source="Source",
-            published_at=datetime.utcnow()
+            published_at=datetime.now(timezone.utc)
         )
         # The validator should convert string to ObjectId
         assert article.id is not None
@@ -186,7 +186,7 @@ class TestObjectIdValidation:
             url="https://example.com",
             title="Test",
             source="Source",
-            published_at=datetime.utcnow()
+            published_at=datetime.now(timezone.utc)
         )
         assert article.id == oid
     
@@ -198,5 +198,5 @@ class TestObjectIdValidation:
                 url="https://example.com",
                 title="Test",
                 source="Source",
-                published_at=datetime.utcnow()
+                published_at=datetime.now(timezone.utc)
             )

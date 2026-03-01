@@ -206,7 +206,7 @@
             <div class="flex justify-between items-center py-2 border-b border-latte-surface0 dark:border-frappe-surface0">
                 <dt class="text-sm font-medium text-latte-subtext0 dark:text-frappe-subtext0">Topics of Interest</dt>
                 <dd class="text-sm text-latte-text dark:text-frappe-text font-medium">
-                    {% if preferences.interests_str %}
+                    {% if preferences.interests_str and preferences.interests_str.strip() %}
                         {{ preferences.interests_str.split(',') | length }} topic(s)
                     {% else %}
                         <span class="text-latte-overlay0 dark:text-frappe-overlay0">Not set</span>
@@ -216,7 +216,7 @@
             <div class="flex justify-between items-center py-2 border-b border-latte-surface0 dark:border-frappe-surface0">
                 <dt class="text-sm font-medium text-latte-subtext0 dark:text-frappe-subtext0">Topics to Exclude</dt>
                 <dd class="text-sm text-latte-text dark:text-frappe-text font-medium">
-                    {% if preferences.exclude_topics_str %}
+                    {% if preferences.exclude_topics_str and preferences.exclude_topics_str.strip() %}
                         {{ preferences.exclude_topics_str.split(',') | length }} topic(s)
                     {% else %}
                         <span class="text-latte-overlay0 dark:text-frappe-overlay0">Not set</span>
@@ -408,27 +408,25 @@
     
     // Recalculate all scores
     async function recalculateScores() {
-        const confirmed = confirm('⚠️ WARNING: This will recalculate relevance scores and tags for ALL articles using AI.\n\nThis process can take a very long time (several minutes or hours depending on the number of articles).\n\nThe page may appear unresponsive during processing.\n\nAre you sure you want to continue?');
+        const confirmed = confirm('⚠️ WARNING: This will recalculate relevance scores and tags for ALL articles using AI.\n\nProcessing runs in the background. Refresh the page in a few minutes to see updated scores.\n\nAre you sure you want to continue?');
         
         if (!confirmed) return;
         
         const btn = document.getElementById('recalculate-btn');
         btn.disabled = true;
-        btn.innerHTML = '<svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Processing...</span>';
-        
-        showToast('Recalculating scores... This may take several minutes.', 'info');
+        btn.innerHTML = '<svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Starting...</span>';
         
         try {
             const response = await fetch('/api/articles/recalculate', { method: 'POST' });
             const result = await response.json();
             
             if (response.ok) {
-                showToast(result.message || 'Scores recalculated successfully!', 'success');
+                showToast(result.message || 'Score recalculation started in the background!', 'success');
             } else {
-                showToast('Failed to recalculate scores', 'error');
+                showToast(result.detail || 'Failed to start recalculation', 'error');
             }
         } catch (error) {
-            showToast('Error recalculating scores', 'error');
+            showToast('Error starting recalculation', 'error');
             console.error('Error:', error);
         } finally {
             btn.disabled = false;

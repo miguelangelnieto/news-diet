@@ -32,6 +32,7 @@ class Article(BaseModel):
     source: str
     published_at: datetime
     summary: str | None = None
+    full_text: str | None = None
     relevance_score: int | None = None
     tags: list[str] = Field(default_factory=list)
     is_read: bool = False
@@ -63,6 +64,7 @@ class ArticleResponse(BaseModel):
     source: str
     published_at: datetime
     summary: str | None = None
+    full_text: str | None = None
     relevance_score: int | None = None
     tags: list[str]
     is_read: bool

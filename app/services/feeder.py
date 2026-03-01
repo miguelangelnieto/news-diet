@@ -54,6 +54,10 @@ class RSSFeeder:
             # Block well-known internal hostnames
             if hostname == 'localhost' or hostname.endswith('.local'):
                 return False
+            # Block bare hostnames with no dots (e.g. Docker service names like
+            # "mongo", "ollama", "redis") – all public FQDNs contain at least one dot.
+            if '.' not in hostname:
+                return False
             # If the hostname is a bare IP address, check for private ranges
             try:
                 ip = ipaddress.ip_address(hostname)
@@ -74,6 +78,9 @@ class RSSFeeder:
             return ""
         soup = BeautifulSoup(html, 'html.parser')
         for tag in soup.find_all(True):
+            # After decompose() the tag is detached; skip orphaned nodes.
+            if tag.parent is None:
+                continue
             if tag.name in _DANGEROUS_TAGS:
                 tag.decompose()
             elif tag.name not in _ALLOWED_TAGS:
@@ -220,6 +227,11 @@ class RSSFeeder:
                     url = entry.get('link', '')
                     title = entry.get('title', 'No Title')
                     
+                    # Skip entries without a URL
+                    if not url:
+                        logger.debug(f"Skipping entry with no URL in feed: {feed_name}")
+                        continue
+                    
                     # Check if article already exists (prevents re-processing and re-summarizing)
                     # This is the first layer of deduplication - query before processing
                     existing = await self.db.articles.find_one({"url": url})
@@ -256,6 +268,7 @@ class RSSFeeder:
                         "relevance_score": ai_result["relevance_score"],
                         "tags": ai_result["tags"],
                         "is_read": False,
+                        "is_starred": False,
                         "is_hidden": is_hidden,
                         "created_at": datetime.now(timezone.utc)
                     }
@@ -308,7 +321,7 @@ class RSSFeeder:
         try:
             # Get all enabled feeds
             cursor = self.db.feeds.find({"enabled": True})
-            feeds = await cursor.to_list(length=100)
+            feeds = await cursor.to_list(length=None)
             
             if not feeds:
                 logger.warning("No enabled feeds found")

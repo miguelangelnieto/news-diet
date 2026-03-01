@@ -72,7 +72,7 @@
     <div class="grid grid-cols-1 gap-4" id="articles-container">
         {% for article in articles %}
         <article class="article-item group article-card bg-latte-mantle dark:bg-frappe-mantle rounded-2xl p-5 border border-transparent
-                    {% if article.relevance_score >= 8 %}hover:border-latte-green/30 dark:hover:border-frappe-green/30 shadow-latte-green/5 dark:shadow-frappe-green/5{% elif article.relevance_score >= 5 %}hover:border-latte-yellow/30 dark:hover:border-frappe-yellow/30 shadow-latte-yellow/5 dark:shadow-frappe-yellow/5{% else %}hover:border-latte-overlay0/30 dark:hover:border-frappe-overlay0/30 shadow-latte-overlay0/5 dark:shadow-frappe-overlay0/5{% endif %}
+                    {% if article.relevance_score is not none and article.relevance_score >= 8 %}hover:border-latte-green/30 dark:hover:border-frappe-green/30 shadow-latte-green/5 dark:shadow-frappe-green/5{% elif article.relevance_score is not none and article.relevance_score >= 5 %}hover:border-latte-yellow/30 dark:hover:border-frappe-yellow/30 shadow-latte-yellow/5 dark:shadow-frappe-yellow/5{% else %}hover:border-latte-overlay0/30 dark:hover:border-frappe-overlay0/30 shadow-latte-overlay0/5 dark:shadow-frappe-overlay0/5{% endif %}
                     {% if article.is_read %}opacity-60 saturate-[0.25]{% endif %}
                     hover:shadow-xl transition-all duration-300 relative overflow-hidden"
              data-article-id="{{ article.id }}"
@@ -82,7 +82,7 @@
             
             <!-- Relevance Glow Effect -->
             <div class="absolute top-0 left-0 w-1.5 h-full 
-                {% if article.relevance_score >= 8 %}bg-latte-green dark:bg-frappe-green opacity-80{% elif article.relevance_score >= 5 %}bg-latte-yellow dark:bg-frappe-yellow opacity-80{% else %}bg-latte-overlay0 dark:bg-frappe-overlay0 opacity-40{% endif %}">
+                {% if article.relevance_score is not none and article.relevance_score >= 8 %}bg-latte-green dark:bg-frappe-green opacity-80{% elif article.relevance_score is not none and article.relevance_score >= 5 %}bg-latte-yellow dark:bg-frappe-yellow opacity-80{% else %}bg-latte-overlay0 dark:bg-frappe-overlay0 opacity-40{% endif %}">
             </div>
 
             <div class="flex justify-between items-start gap-4">
@@ -118,8 +118,8 @@
                                 <span class="tabular-nums">{{ article.published_at.strftime('%b %d, %Y') }}</span>
                                 <span class="text-latte-overlay0 dark:text-frappe-overlay0">•</span>
                                 <span class="inline-flex items-center gap-1 font-bold
-                                    {% if article.relevance_score >= 8 %}text-latte-green dark:text-frappe-green
-                                    {% elif article.relevance_score >= 5 %}text-latte-yellow dark:text-frappe-yellow
+                                    {% if article.relevance_score is not none and article.relevance_score >= 8 %}text-latte-green dark:text-frappe-green
+                                    {% elif article.relevance_score is not none and article.relevance_score >= 5 %}text-latte-yellow dark:text-frappe-yellow
                                     {% else %}text-latte-overlay0 dark:text-frappe-overlay0{% endif %}">
                                     {{ article.relevance_score }}/10
                                 </span>
@@ -237,7 +237,11 @@
         var isAllTab = urlParams.get('show_all') === 'true';
         var isStarredTab = urlParams.get('filter_starred') === 'true';
         
-        fetch('/api/articles/' + articleId + '/read?is_read=' + isRead, { method: 'PATCH' })
+        fetch('/api/articles/' + articleId + '/read', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ is_read: isRead === 'true' })
+            })
             .then(function(response) {
                 if (!response.ok) throw new Error('Failed to update');
                 return response.json();
@@ -370,7 +374,11 @@
         var articleElement = document.querySelector('[data-article-id="' + articleId + '"]');
         if (!articleElement) return;
         
-        fetch('/api/articles/' + articleId + '/star?is_starred=' + isStarred, { method: 'PATCH' })
+        fetch('/api/articles/' + articleId + '/star', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ is_starred: isStarred === 'true' })
+            })
             .then(function(response) {
                 if (!response.ok) throw new Error('Failed to update');
                 return response.json();

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import BackgroundTasks, FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -71,6 +71,16 @@ app = FastAPI(
 # Setup Jinja2 templates
 templates = Jinja2Templates(directory="app/templates")
 
+# Custom Jinja2 filter: extract hostname from a URL
+def extract_hostname(url: str) -> str:
+    from urllib.parse import urlparse
+    try:
+        return urlparse(url).hostname or url
+    except Exception:
+        return url
+
+templates.env.filters["extract_hostname"] = extract_hostname
+
 # Mount static files
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
@@ -95,8 +105,8 @@ async def initialize_default_preferences():
         logger.info("Initializing default user preferences")
         
         default_prefs = {
-            "interests": ["Python", "DevOps", "AI", "Web Development", "Open Source"],
-            "exclude_topics": ["Cryptocurrency", "NFT"],
+            "interests": [],
+            "exclude_topics": [],
             "min_relevance_score": 5,
             "dark_mode": False,
             "updated_at": datetime.now(timezone.utc)
@@ -172,7 +182,7 @@ async def feeds_page(request: Request):
     db = get_database()
     
     cursor = db.feeds.find().sort("name", 1)
-    feeds = await cursor.to_list(length=100)
+    feeds = await cursor.to_list(length=None)
     
     # Convert ObjectId to string
     for feed in feeds:
@@ -285,7 +295,8 @@ async def refresh_articles():
 
 
 @app.patch("/api/articles/{article_id}/read")
-async def mark_article_read(article_id: str, is_read: bool = True):
+async def mark_article_read(article_id: str, payload: dict):
+    is_read: bool = payload.get("is_read", True)
     db = get_database()
     
     try:
@@ -312,7 +323,8 @@ async def mark_article_read(article_id: str, is_read: bool = True):
 
 
 @app.patch("/api/articles/{article_id}/star")
-async def toggle_article_star(article_id: str, is_starred: bool = True):
+async def toggle_article_star(article_id: str, payload: dict):
+    is_starred: bool = payload.get("is_starred", True)
     db = get_database()
     
     try:
@@ -347,7 +359,7 @@ async def get_feeds():
     db = get_database()
     
     cursor = db.feeds.find().sort("name", 1)
-    feeds = await cursor.to_list(length=100)
+    feeds = await cursor.to_list(length=None)
     
     # Convert to response model
     return [
@@ -521,43 +533,35 @@ async def delete_all_articles():
         raise HTTPException(status_code=500, detail="Failed to delete articles")
 
 
-@app.post("/api/articles/recalculate")
-async def recalculate_all_scores():
+async def _recalculate_all_scores_bg() -> None:
+    """Background task: reprocess every article with AI."""
     db = get_database()
-    
     try:
-        # Get user preferences
         prefs_doc = await db.preferences.find_one()
         if prefs_doc is None:
-            raise HTTPException(status_code=400, detail="User preferences not found. Please configure your preferences first.")
-        
+            logger.error("Recalculate aborted: user preferences not found.")
+            return
+
         preferences = UserPreferences(
             interests=prefs_doc.get("interests", []),
             exclude_topics=prefs_doc.get("exclude_topics", []),
             min_relevance_score=prefs_doc.get("min_relevance_score", 5),
             dark_mode=prefs_doc.get("dark_mode", False)
         )
-        
-        # Get all articles using a cursor to avoid loading all into memory
+
         cursor = db.articles.find({})
-        
-        # Process articles one by one with proper error handling
-        from app.services.ai_processor import ai_processor
-        
         processed = 0
         async for article in cursor:
             try:
-                # Use the process_article method which handles both summary and scoring
                 result = await ai_processor.process_article(
                     article.get("title", ""),
                     article.get("summary", "") or article.get("full_text", ""),
                     preferences
                 )
-                
-                # Determine if article should be hidden based on new relevance score
-                is_hidden = result["relevance_score"] < preferences.min_relevance_score if result["relevance_score"] is not None else False
-                
-                # Update article with new data
+                is_hidden = (
+                    result["relevance_score"] < preferences.min_relevance_score
+                    if result["relevance_score"] is not None else False
+                )
                 await db.articles.update_one(
                     {"_id": article["_id"]},
                     {"$set": {
@@ -568,45 +572,32 @@ async def recalculate_all_scores():
                     }}
                 )
                 processed += 1
-                
             except Exception as e:
                 logger.error(f"Error processing article {article.get('_id')}: {e}")
                 continue
-        
+
         logger.info(f"Recalculated scores for {processed} articles")
-        return {
-            "success": True,
-            "processed_count": processed,
-            "message": f"Recalculated scores for {processed} articles"
-        }
-        
-    except HTTPException:
-        raise
     except Exception as e:
-        logger.error(f"Error recalculating scores: {e}")
-        raise HTTPException(status_code=500, detail="Failed to recalculate scores")
+        logger.error(f"Error in recalculate background task: {e}")
+
+
+@app.post("/api/articles/recalculate", status_code=202)
+async def recalculate_all_scores(background_tasks: BackgroundTasks):
+    db = get_database()
+    prefs_doc = await db.preferences.find_one()
+    if prefs_doc is None:
+        raise HTTPException(status_code=400, detail="User preferences not found. Please configure your preferences first.")
+
+    background_tasks.add_task(_recalculate_all_scores_bg)
+    return {
+        "success": True,
+        "message": "Score recalculation started in the background. Refresh the page in a few minutes."
+    }
 
 
 # ============================================
 # Health Check
 # ============================================
-
-@app.get("/test-extract", response_class=HTMLResponse)
-async def test_extract(url: str):
-    """
-    Temporary test route to check trafilatura extraction for a given URL.
-    Example: /test-extract?url=https://arstechnica.com/...
-    """
-    if not url:
-        raise HTTPException(status_code=400, detail="URL parameter is required")
-
-    full_text = await rss_feeder.fetch_full_content(url)
-
-    if full_text:
-        return HTMLResponse(content=full_text)
-    else:
-        return HTMLResponse(content="<p>Could not extract content.</p>", status_code=404)
-
 
 @app.get("/health")
 async def health_check():

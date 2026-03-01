@@ -116,11 +116,15 @@ Summary:"""
                         summary = summary.split(':', 1)[1].strip()
                     break
             
-            # Final safety check: if LLM ignored the 4-sentence limit, we take the first 4.
-            sentences = [s.strip() for s in summary.split('.') if s.strip()]
+            # Final safety check: if LLM ignored the 4-sentence limit, take the first 4.
+            # Use a regex that splits on sentence-ending punctuation followed by whitespace,
+            # which avoids false splits on abbreviations like "Dr." or "U.S.".
+            sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', summary) if s.strip()]
             if len(sentences) > 4:
-                summary = '. '.join(sentences[:4]) + '.'
-            elif len(sentences) > 0 and not summary.endswith('.'):
+                summary = ' '.join(sentences[:4])
+                if not summary[-1] in '.!?':
+                    summary += '.'
+            elif len(sentences) > 0 and summary[-1] not in '.!?':
                 summary += '.'
             
             return summary
@@ -222,8 +226,8 @@ Quality: <High, Medium, or Low>"""
 
             # --- Scoring Logic ---
             final_score = 0
-            # Remove duplicate tags and limit to 3 for scoring
-            tags = list(dict.fromkeys(tags))[:3]
+            # Remove duplicate tags while preserving order
+            tags = list(dict.fromkeys(tags))
 
             # If any excluded topic is present, the article is irrelevant.
             if has_excluded:
