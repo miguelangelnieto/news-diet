@@ -220,15 +220,15 @@ Quality: <High, Medium, or Low>"""
 
             total_interests = len(interests_list)
 
-            # Base score: normalized coverage of the user's interest list.
-            # When no interests are defined, fall back to a neutral mid-point.
+            # Base score: any match is valuable regardless of how many interests
+            # the user has. One match scores 7; each additional match adds 1
+            # (capped at 9) to reward breadth without punishing single-topic articles.
             if total_interests == 0:
                 base_score = 5
             elif len(tags) == 0:
                 base_score = 1
             else:
-                coverage = len(tags) / total_interests  # 0.0–1.0
-                base_score = round(coverage * 8) + 1    # 1–9
+                base_score = min(7 + (len(tags) - 1), 9)
 
             # Quality modifier (±2): makes quality meaningfully affect the score.
             quality_modifier_map = {"high": 2, "low": -2}
