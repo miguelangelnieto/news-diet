@@ -7,7 +7,7 @@
 - **🤖 Flexible AI Filtering**: Supports **Ollama** (local) and **OpenRouter** (cloud) to score article relevance (0-10) based on your interests
 - **📡 RSS Feed Management**: Web UI to add, enable/disable, and manage RSS feeds
 - **⚙️ Customizable Preferences**: Configure topics of interest and exclusions for personalized AI scoring
-- **🎨 Catppuccin Theme**: Beautiful pastel color scheme with Latte (light) and Frappé (dark) variants
+- **🎨 Nord Theme**: Clean, arctic color scheme with light and dark variants
 - **🌙 Dark Mode**: Toggle between light and dark themes with persistent preference
 - **📝 AI Summaries**: Automatic article summarization and tagging
 - **🔄 Automatic Fetching**: Background scheduler checks feeds every hour
@@ -152,7 +152,7 @@ http://localhost:8000
 - **Backend**: FastAPI (Python 3.11+)
 - **Database**: MongoDB
 - **AI Engine**: Ollama (OpenAI-compatible API)
-- **Frontend**: Jinja2 + TailwindCSS + HTMX + Catppuccin theme
+- **Frontend**: Jinja2 + TailwindCSS + HTMX + Nord theme
 - **Task Scheduler**: APScheduler
 - **Containerization**: Docker Compose
 

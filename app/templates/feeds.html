@@ -6,14 +6,14 @@
 <div class="space-y-6">
     <!-- Header -->
     <div>
-        <h2 class="text-2xl sm:text-3xl font-bold text-latte-text dark:text-frappe-text">RSS Feed Management</h2>
-        <p class="text-latte-subtext0 dark:text-frappe-subtext0 mt-1">Manage your news sources</p>
+        <h2 class="text-2xl sm:text-3xl font-bold text-nord-light-text dark:text-nord-dark-text">RSS Feed Management</h2>
+        <p class="text-nord-light-subtext0 dark:text-nord-dark-subtext0 mt-1">Manage your news sources</p>
     </div>
     
     <!-- Add New Feed Form -->
-    <div class="bg-latte-mantle dark:bg-frappe-mantle rounded-2xl p-6 shadow-sm border border-latte-surface0 dark:border-frappe-surface0">
-        <h3 class="text-xl font-bold text-latte-text dark:text-frappe-text mb-6 flex items-center gap-2">
-            <div class="p-2 bg-latte-blue/10 dark:bg-frappe-blue/10 rounded-lg text-latte-blue dark:text-frappe-blue">
+    <div class="bg-nord-light-mantle dark:bg-nord-dark-mantle rounded-2xl p-6 shadow-sm border border-nord-light-surface0 dark:border-nord-dark-surface0">
+        <h3 class="text-xl font-bold text-nord-light-text dark:text-nord-dark-text mb-6 flex items-center gap-2">
+            <div class="p-2 bg-nord-light-blue/10 dark:bg-nord-dark-blue/10 rounded-lg text-nord-light-blue dark:text-nord-dark-blue">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
@@ -23,32 +23,32 @@
         <form id="add-feed-form" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-2">
-                    <label for="feed-url" class="block text-sm font-bold text-latte-subtext1 dark:text-frappe-subtext1">Feed RSS URL</label>
+                    <label for="feed-url" class="block text-sm font-bold text-nord-light-subtext1 dark:text-nord-dark-subtext1">Feed RSS URL</label>
                     <input 
                         type="url" 
                         id="feed-url" 
                         name="url" 
                         required
                         placeholder="https://example.com/rss"
-                        class="w-full px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-all outline-none"
+                        class="w-full px-4 py-3 bg-nord-light-base dark:bg-nord-dark-base border border-nord-light-surface1 dark:border-nord-dark-surface1 rounded-xl text-nord-light-text dark:text-nord-dark-text placeholder-nord-light-overlay0 dark:placeholder-nord-dark-overlay0 focus:ring-2 focus:ring-nord-light-blue dark:focus:ring-nord-dark-blue focus:border-transparent transition-all outline-none"
                     >
                 </div>
                 <div class="space-y-2">
-                    <label for="feed-name" class="block text-sm font-bold text-latte-subtext1 dark:text-frappe-subtext1">Source Name</label>
+                    <label for="feed-name" class="block text-sm font-bold text-nord-light-subtext1 dark:text-nord-dark-subtext1">Source Name</label>
                     <input 
                         type="text" 
                         id="feed-name" 
                         name="name" 
                         required
                         placeholder="e.g. Hacker News, BBC, TechCrunch"
-                        class="w-full px-4 py-3 bg-latte-base dark:bg-frappe-base border border-latte-surface1 dark:border-frappe-surface1 rounded-xl text-latte-text dark:text-frappe-text placeholder-latte-overlay0 dark:placeholder-frappe-overlay0 focus:ring-2 focus:ring-latte-blue dark:focus:ring-frappe-blue focus:border-transparent transition-all outline-none"
+                        class="w-full px-4 py-3 bg-nord-light-base dark:bg-nord-dark-base border border-nord-light-surface1 dark:border-nord-dark-surface1 rounded-xl text-nord-light-text dark:text-nord-dark-text placeholder-nord-light-overlay0 dark:placeholder-nord-dark-overlay0 focus:ring-2 focus:ring-nord-light-blue dark:focus:ring-nord-dark-blue focus:border-transparent transition-all outline-none"
                     >
                 </div>
             </div>
             <div class="flex justify-end">
                 <button 
                     type="submit"
-                    class="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-latte-blue dark:bg-frappe-blue hover:bg-latte-sapphire dark:hover:bg-frappe-sapphire text-white px-8 py-3.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-95"
+                    class="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-nord-light-blue dark:bg-nord-dark-blue hover:bg-nord-light-sapphire dark:hover:bg-nord-dark-sapphire text-white px-8 py-3.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-95"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -62,8 +62,8 @@
     <!-- Feeds List -->
     <div class="space-y-4">
         <div class="flex items-center justify-between px-2">
-            <h3 class="text-xl font-bold text-latte-text dark:text-frappe-text">Your Subscriptions</h3>
-            <span class="px-3 py-1 bg-latte-surface0 dark:bg-frappe-surface0 rounded-full text-xs font-bold text-latte-subtext0 dark:text-frappe-subtext0">
+            <h3 class="text-xl font-bold text-nord-light-text dark:text-nord-dark-text">Your Subscriptions</h3>
+            <span class="px-3 py-1 bg-nord-light-surface0 dark:bg-nord-dark-surface0 rounded-full text-xs font-bold text-nord-light-subtext0 dark:text-nord-dark-subtext0">
                 {{ feeds|length }} total
             </span>
         </div>
@@ -71,42 +71,42 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {% if feeds %}
                 {% for feed in feeds %}
-                <div class="group bg-latte-mantle dark:bg-frappe-mantle rounded-2xl p-5 border border-transparent hover:border-latte-blue/20 dark:hover:border-frappe-blue/20 shadow-sm hover:shadow-md transition-all duration-300" data-feed-id="{{ feed.id }}">
+                <div class="group bg-nord-light-mantle dark:bg-nord-dark-mantle rounded-2xl p-5 border border-transparent hover:border-nord-light-blue/20 dark:hover:border-nord-dark-blue/20 shadow-sm hover:shadow-md transition-all duration-300" data-feed-id="{{ feed.id }}">
                     <div class="flex items-start justify-between gap-4">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 shrink-0 rounded-xl bg-latte-blue/5 dark:bg-frappe-blue/5 flex items-center justify-center text-latte-blue dark:text-frappe-blue group-hover:bg-latte-blue dark:group-hover:bg-frappe-blue group-hover:text-white transition-all duration-300">
+                                <div class="w-10 h-10 shrink-0 rounded-xl bg-nord-light-blue/5 dark:bg-nord-dark-blue/5 flex items-center justify-center text-nord-light-blue dark:text-nord-dark-blue group-hover:bg-nord-light-blue dark:group-hover:bg-nord-dark-blue group-hover:text-white transition-all duration-300">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
                                     </svg>
                                 </div>
                                 <div class="min-w-0">
-                                    <h4 class="text-lg font-bold text-latte-text dark:text-frappe-text truncate leading-tight">
+                                    <h4 class="text-lg font-bold text-nord-light-text dark:text-nord-dark-text truncate leading-tight">
                                         {{ feed.name }}
                                     </h4>
-                                    <p class="text-xs font-medium text-latte-blue dark:text-frappe-blue truncate mt-0.5 opacity-80">{{ feed.url }}</p>
+                                    <p class="text-xs font-medium text-nord-light-blue dark:text-nord-dark-blue truncate mt-0.5 opacity-80">{{ feed.url }}</p>
                                 </div>
                             </div>
                             
                             <div class="flex flex-wrap items-center gap-2 mt-4">
                                 {% if not feed.enabled %}
-                                <span class="px-2 py-0.5 bg-latte-surface1 dark:bg-frappe-surface1 text-latte-subtext0 dark:text-frappe-subtext0 text-[10px] font-black uppercase tracking-wider rounded-md">
+                                <span class="px-2 py-0.5 bg-nord-light-surface1 dark:bg-nord-dark-surface1 text-nord-light-subtext0 dark:text-nord-dark-subtext0 text-[10px] font-black uppercase tracking-wider rounded-md">
                                     Inactive
                                 </span>
                                 {% else %}
-                                <span class="px-2 py-0.5 bg-latte-green/10 dark:bg-frappe-green/10 text-latte-green dark:text-frappe-green text-[10px] font-black uppercase tracking-wider rounded-md">
+                                <span class="px-2 py-0.5 bg-nord-light-green/10 dark:bg-nord-dark-green/10 text-nord-light-green dark:text-nord-dark-green text-[10px] font-black uppercase tracking-wider rounded-md">
                                     Active
                                 </span>
                                 {% endif %}
                                 
                                 {% if feed.error_count > 0 %}
-                                <span class="px-2 py-0.5 bg-latte-red/10 dark:bg-frappe-red/10 text-latte-red dark:text-frappe-red text-[10px] font-black uppercase tracking-wider rounded-md">
+                                <span class="px-2 py-0.5 bg-nord-light-red/10 dark:bg-nord-dark-red/10 text-nord-light-red dark:text-nord-dark-red text-[10px] font-black uppercase tracking-wider rounded-md">
                                     {{ feed.error_count }} error{% if feed.error_count != 1 %}s{% endif %}
                                 </span>
                                 {% endif %}
                                 
                                 {% if feed.last_fetched_at %}
-                                <span class="text-[11px] font-medium text-latte-overlay0 dark:text-frappe-overlay0 tabular-nums">
+                                <span class="text-[11px] font-medium text-nord-light-overlay0 dark:text-nord-dark-overlay0 tabular-nums">
                                     Updated {{ feed.last_fetched_at.strftime('%b %d, %H:%M') }}
                                 </span>
                                 {% endif %}
@@ -117,7 +117,7 @@
                             <button 
                                 onclick="toggleFeed('{{ feed.id }}', {{ 'false' if feed.enabled else 'true' }})"
                                 class="p-2.5 rounded-xl transition-all duration-300
-                                       {% if feed.enabled %}text-latte-green dark:text-frappe-green bg-latte-green/5 dark:bg-frappe-green/5 hover:bg-latte-green dark:hover:bg-frappe-green hover:text-white{% else %}text-latte-overlay0 dark:text-frappe-overlay0 bg-latte-surface0 dark:bg-frappe-surface0 hover:bg-latte-blue dark:hover:bg-frappe-blue hover:text-white{% endif %}"
+                                       {% if feed.enabled %}text-nord-light-green dark:text-nord-dark-green bg-nord-light-green/5 dark:bg-nord-dark-green/5 hover:bg-nord-light-green dark:hover:bg-nord-dark-green hover:text-white{% else %}text-nord-light-overlay0 dark:text-nord-dark-overlay0 bg-nord-light-surface0 dark:bg-nord-dark-surface0 hover:bg-nord-light-blue dark:hover:bg-nord-dark-blue hover:text-white{% endif %}"
                                 title="{% if feed.enabled %}Disable{% else %}Enable{% endif %} feed"
                                 aria-label="{% if feed.enabled %}Disable{% else %}Enable{% endif %} feed"
                                 aria-pressed="{{ 'true' if feed.enabled else 'false' }}"
@@ -129,7 +129,7 @@
                             
                             <button 
                                 onclick="deleteFeed('{{ feed.id }}')"
-                                class="p-2.5 text-latte-red/60 dark:text-frappe-red/60 hover:text-white hover:bg-latte-red dark:hover:bg-frappe-red rounded-xl transition-all duration-300"
+                                class="p-2.5 text-nord-light-red/60 dark:text-nord-dark-red/60 hover:text-white hover:bg-nord-light-red dark:hover:bg-nord-dark-red rounded-xl transition-all duration-300"
                                 title="Remove subscription"
                                 aria-label="Remove {{ feed.name }} subscription"
                             >
@@ -143,13 +143,13 @@
                 {% endfor %}
             {% else %}
                 <div class="px-6 py-12 text-center">
-                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-latte-surface0 dark:bg-frappe-surface0 flex items-center justify-center">
-                        <svg class="w-8 h-8 text-latte-overlay0 dark:text-frappe-overlay0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-nord-light-surface0 dark:bg-nord-dark-surface0 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-nord-light-overlay0 dark:text-nord-dark-overlay0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-lg font-semibold text-latte-text dark:text-frappe-text">No feeds yet</h3>
-                    <p class="mt-2 text-latte-subtext0 dark:text-frappe-subtext0 text-sm">Add your first RSS feed above to get started</p>
+                    <h3 class="text-lg font-semibold text-nord-light-text dark:text-nord-dark-text">No feeds yet</h3>
+                    <p class="mt-2 text-nord-light-subtext0 dark:text-nord-dark-subtext0 text-sm">Add your first RSS feed above to get started</p>
                 </div>
             {% endif %}
         </div>

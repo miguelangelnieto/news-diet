@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="512" height="512">
+  <!-- News Diet App Icon — GNOME HIG Style -->
+  <!-- Stacked newspaper with folded corner and Nord accent -->
+  
+  <!-- Back page (darker, offset) -->
+  <rect x="28" y="14" width="84" height="98" rx="2" fill="#d8dee9"/>
+  
+  <!-- Middle page -->
+  <rect x="24" y="10" width="84" height="98" rx="2" fill="#e5e9f0"/>
+  
+  <!-- Main page body -->
+  <path d="M20,6 H104 V24 H112 V108 Q112,112 108,112 H24 Q20,112 20,108 Z" fill="#eceff4"/>
+  
+  <!-- Left + bottom accent band (Nord Mauve) -->
+  <rect x="20" y="6" width="8" height="102" fill="#b48ead"/>
+  <rect x="20" y="100" width="92" height="12" fill="#b48ead"/>
+  
+  <!-- Folded corner -->
+  <path d="M104,6 L112,6 L112,14 Z" fill="#d8dee9"/>
+  <path d="M104,6 L104,14 L112,14 Z" fill="#b48ead"/>
+  <line x1="104" y1="6" x2="112" y2="14" stroke="#a3be8c" stroke-width="1"/>
+  
+  <!-- Content lines -->
+  <rect x="36" y="28" width="56" height="3" rx="1.5" fill="#d8dee9"/>
+  <rect x="36" y="38" width="64" height="2" rx="1" fill="#cdd4e0"/>
+  <rect x="36" y="46" width="60" height="2" rx="1" fill="#cdd4e0"/>
+  <rect x="36" y="54" width="52" height="2" rx="1" fill="#cdd4e0"/>
+  <rect x="36" y="66" width="64" height="2" rx="1" fill="#cdd4e0"/>
+  <rect x="36" y="74" width="48" height="2" rx="1" fill="#cdd4e0"/>
+  <rect x="36" y="86" width="60" height="2" rx="1" fill="#cdd4e0"/>
+  <rect x="36" y="94" width="40" height="2" rx="1" fill="#cdd4e0"/>
+  
+  <!-- Highlight dot (Nord Aurora) -->
+  <circle cx="40" cy="29" r="2" fill="#ebcb8b"/>
+</svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+  <!-- News Diet Symbolic Icon — GNOME HIG Style -->
+  <!-- Simplified monochrome version for small sizes -->
+  
+  <!-- Page body -->
+  <path d="M3,1 H12 V3 H13 V14 Q13,15 12,15 H4 Q3,15 3,14 Z" fill="#3b4252"/>
+  
+  <!-- Folded corner -->
+  <path d="M12,1 L13,1 L13,3 Z" fill="#4c566a"/>
+  
+  <!-- Accent line -->
+  <rect x="3" y="1" width="1" height="13" fill="#b48ead"/>
+  
+  <!-- Content lines -->
+  <rect x="5" y="5" width="6" height="0.5" rx="0.25" fill="#4c566a"/>
+  <rect x="5" y="7" width="7" height="0.5" rx="0.25" fill="#4c566a"/>
+  <rect x="5" y="9" width="5" height="0.5" rx="0.25" fill="#4c566a"/>
+  <rect x="5" y="11" width="7" height="0.5" rx="0.25" fill="#4c566a"/>
+  <rect x="5" y="13" width="4" height="0.5" rx="0.25" fill="#4c566a"/>
+  
+  <!-- Highlight dot -->
+  <circle cx="5.5" cy="5.25" r="0.5" fill="#ebcb8b"/>
+</svg>

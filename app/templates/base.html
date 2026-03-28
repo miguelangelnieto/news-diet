@@ -6,15 +6,15 @@
     <title>{% block title %}News Diet{% endblock %}</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/static/icon-v3.svg">
-    <link rel="apple-touch-icon" href="/static/icon-v3.svg">
+    <link rel="icon" type="image/svg+xml" href="/static/icon-v4.svg">
+    <link rel="apple-touch-icon" href="/static/icon-v4.svg">
     
     <!-- PWA Meta Tags -->
     <meta name="application-name" content="News Diet">
     <meta name="apple-mobile-web-app-title" content="News Diet">
     <meta name="description" content="AI-powered RSS news aggregator">
     <!-- Theme Color -->
-    <meta name="theme-color" content="#1e1e2e">
+    <meta name="theme-color" content="#2e3440">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -28,63 +28,51 @@
             theme: {
                 extend: {
                     colors: {
-                        // Catppuccin Latte (Light Mode)
-                        latte: {
-                            rosewater: '#dc8a78',
-                            flamingo: '#dd7878',
-                            pink: '#ea76cb',
-                            mauve: '#8839ef',
-                            red: '#d20f39',
-                            maroon: '#e64553',
-                            peach: '#fe640b',
-                            yellow: '#df8e1d',
-                            green: '#40a02b',
-                            teal: '#179299',
-                            sky: '#04a5e5',
-                            sapphire: '#209fb5',
-                            blue: '#1e66f5',
-                            lavender: '#7287fd',
-                            text: '#4c4f69',
-                            subtext1: '#5c5f77',
-                            subtext0: '#6c6f85',
-                            overlay2: '#7c7f93',
-                            overlay1: '#8c8fa1',
-                            overlay0: '#9ca0b0',
-                            surface2: '#acb0be',
-                            surface1: '#bcc0cc',
-                            surface0: '#ccd0da',
-                            base: '#eff1f5',
-                            mantle: '#e6e9ef',
-                            crust: '#dce0e8',
+                        // Nord Light Mode (Snow Storm)
+                        'nord-light': {
+                            mauve: '#b48ead',
+                            red: '#bf616a',
+                            maroon: '#d08770',
+                            yellow: '#ebcb8b',
+                            green: '#a3be8c',
+                            teal: '#8fbcbb',
+                            sapphire: '#88c0d0',
+                            blue: '#5e81ac',
+                            text: '#2e3440',
+                            subtext1: '#3b4252',
+                            subtext0: '#434c5e',
+                            overlay2: '#4c566a',
+                            overlay1: '#6a7380',
+                            overlay0: '#7b8494',
+                            surface2: '#9aa3b4',
+                            surface1: '#b8bfd0',
+                            surface0: '#cdd4e0',
+                            base: '#eceff4',
+                            mantle: '#e5e9f0',
+                            crust: '#d8dee9',
                         },
-                        // Catppuccin Frappe (Dark Mode)
-                        frappe: {
-                            rosewater: '#f2d5cf',
-                            flamingo: '#eebebe',
-                            pink: '#f4b8e4',
-                            mauve: '#ca9ee6',
-                            red: '#e78284',
-                            maroon: '#ea999c',
-                            peach: '#ef9f76',
-                            yellow: '#e5c890',
-                            green: '#a6d189',
-                            teal: '#81c8be',
-                            sky: '#99d1db',
-                            sapphire: '#85c1dc',
-                            blue: '#8caaee',
-                            lavender: '#babbf1',
-                            text: '#c6d0f5',
-                            subtext1: '#b5bfe2',
-                            subtext0: '#a5adce',
-                            overlay2: '#949cbb',
-                            overlay1: '#838ba7',
-                            overlay0: '#737994',
-                            surface2: '#626880',
-                            surface1: '#51576d',
-                            surface0: '#414559',
-                            base: '#303446',
-                            mantle: '#292c3c',
-                            crust: '#232634',
+                        // Nord Dark Mode (Polar Night)
+                        'nord-dark': {
+                            mauve: '#b48ead',
+                            red: '#bf616a',
+                            maroon: '#d08770',
+                            yellow: '#ebcb8b',
+                            green: '#a3be8c',
+                            teal: '#8fbcbb',
+                            sapphire: '#88c0d0',
+                            blue: '#81a1c1',
+                            text: '#eceff4',
+                            subtext1: '#e5e9f0',
+                            subtext0: '#d8dee9',
+                            overlay2: '#aeb3c2',
+                            overlay1: '#98a0b4',
+                            overlay0: '#7b88a1',
+                            surface2: '#5c6a80',
+                            surface1: '#4c5870',
+                            surface0: '#434c5e',
+                            base: '#2e3440',
+                            mantle: '#3b4252',
+                            crust: '#434c5e',
                         }
                     }
                 }
@@ -113,15 +101,15 @@
             transform: translateY(-2px);
         }
         
-        /* Relevance score indicators - Catppuccin colors */
-        .score-high { border-left: 4px solid #40a02b; } /* Latte green */
-        .dark .score-high { border-left-color: #a6d189; } /* Frappe green */
+        /* Relevance score indicators - Nord colors */
+        .score-high { border-left: 4px solid #a3be8c; } /* Nord green */
+        .dark .score-high { border-left-color: #a3be8c; }
         
-        .score-medium { border-left: 4px solid #df8e1d; } /* Latte yellow */
-        .dark .score-medium { border-left-color: #e5c890; } /* Frappe yellow */
+        .score-medium { border-left: 4px solid #ebcb8b; } /* Nord yellow */
+        .dark .score-medium { border-left-color: #ebcb8b; }
         
-        .score-low { border-left: 4px solid #9ca0b0; } /* Latte overlay0 */
-        .dark .score-low { border-left-color: #737994; } /* Frappe overlay0 */
+        .score-low { border-left: 4px solid #7b8494; } /* Nord overlay0 */
+        .dark .score-low { border-left-color: #7b88a1; }
         
         /* Loading spinner */
         .htmx-indicator { display: none; }
@@ -130,58 +118,58 @@
         
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #e6e9ef; }
-        ::-webkit-scrollbar-thumb { background: #acb0be; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #9ca0b0; }
-        .dark ::-webkit-scrollbar-track { background: #292c3c; }
-        .dark ::-webkit-scrollbar-thumb { background: #51576d; }
-        .dark ::-webkit-scrollbar-thumb:hover { background: #626880; }
+        ::-webkit-scrollbar-track { background: #e5e9f0; }
+        ::-webkit-scrollbar-thumb { background: #9aa3b4; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #7b8494; }
+        .dark ::-webkit-scrollbar-track { background: #3b4252; }
+        .dark ::-webkit-scrollbar-thumb { background: #4c5870; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #5c6a80; }
         
-        /* Focus ring using Catppuccin blue */
+        /* Focus ring using Nord blue */
         .focus-ring:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(30, 102, 245, 0.3);
+            box-shadow: 0 0 0 3px rgba(94, 129, 172, 0.3);
         }
         .dark .focus-ring:focus {
-            box-shadow: 0 0 0 3px rgba(140, 170, 238, 0.3);
+            box-shadow: 0 0 0 3px rgba(129, 161, 193, 0.3);
         }
     </style>
     
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-latte-base dark:bg-frappe-base min-h-screen pb-20 sm:pb-0">
+<body class="bg-nord-light-base dark:bg-nord-dark-base min-h-screen pb-20 sm:pb-0">
     <!-- Desktop Navigation (Side/Top) -->
-    <nav class="hidden sm:block bg-latte-mantle dark:bg-frappe-mantle border-b border-latte-surface0 dark:border-frappe-surface0 sticky top-0 z-40 backdrop-blur-md bg-opacity-80 dark:bg-opacity-80">
+    <nav class="hidden sm:block bg-nord-light-mantle dark:bg-nord-dark-mantle border-b border-nord-light-surface0 dark:border-nord-dark-surface0 sticky top-0 z-40 backdrop-blur-md bg-opacity-80 dark:bg-opacity-80">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo/Brand -->
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-[#1e1e2e] rounded-lg flex items-center justify-center text-white shadow-lg">
-                        <svg class="w-5 h-5" fill="none" stroke="#ca9ee6" viewBox="0 0 24 24">
+                    <div class="w-8 h-8 bg-[#2e3440] rounded-lg flex items-center justify-center text-white shadow-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="#b48ead" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                         </svg>
                     </div>
-                    <span class="text-xl font-bold tracking-tight text-latte-text dark:text-frappe-text">News Diet</span>
+                    <span class="text-xl font-bold tracking-tight text-nord-light-text dark:text-nord-dark-text">News Diet</span>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="flex items-center gap-1">
                     <a href="/" id="nav-articles" class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors duration-200 
-                        {% if request.url.path == '/' %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-sm{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50{% endif %}">
+                        {% if request.url.path == '/' %}bg-nord-light-surface0 dark:bg-nord-dark-surface0 text-nord-light-blue dark:text-nord-dark-blue shadow-sm{% else %}text-nord-light-subtext0 dark:text-nord-dark-subtext0 hover:bg-nord-light-surface0/50 dark:hover:bg-nord-dark-surface0/50{% endif %}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                         </svg>
                         Articles
                     </a>
                     <a href="/feeds" id="nav-feeds" class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors duration-200
-                        {% if request.url.path == '/feeds' %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-sm{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50{% endif %}">
+                        {% if request.url.path == '/feeds' %}bg-nord-light-surface0 dark:bg-nord-dark-surface0 text-nord-light-blue dark:text-nord-dark-blue shadow-sm{% else %}text-nord-light-subtext0 dark:text-nord-dark-subtext0 hover:bg-nord-light-surface0/50 dark:hover:bg-nord-dark-surface0/50{% endif %}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
                         </svg>
                         Feeds
                     </a>
                     <a href="/preferences" id="nav-preferences" class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors duration-200
-                        {% if request.url.path == '/preferences' %}bg-latte-surface0 dark:bg-frappe-surface0 text-latte-blue dark:text-frappe-blue shadow-sm{% else %}text-latte-subtext0 dark:text-frappe-subtext0 hover:bg-latte-surface0/50 dark:hover:bg-frappe-surface0/50{% endif %}">
+                        {% if request.url.path == '/preferences' %}bg-nord-light-surface0 dark:bg-nord-dark-surface0 text-nord-light-blue dark:text-nord-dark-blue shadow-sm{% else %}text-nord-light-subtext0 dark:text-nord-dark-subtext0 hover:bg-nord-light-surface0/50 dark:hover:bg-nord-dark-surface0/50{% endif %}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -194,24 +182,24 @@
     </nav>
 
     <!-- Mobile Bottom Navigation -->
-    <nav class="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-latte-mantle/90 dark:bg-frappe-mantle/90 backdrop-blur-lg border-t border-latte-surface0 dark:border-frappe-surface0 pb-safe">
+    <nav class="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-nord-light-mantle/90 dark:bg-nord-dark-mantle/90 backdrop-blur-lg border-t border-nord-light-surface0 dark:border-nord-dark-surface0 pb-safe">
         <div class="flex justify-around items-center h-16 px-6">
             <a href="/" id="mob-nav-articles" class="flex flex-col items-center gap-1 text-xs font-bold transition-all duration-200
-                {% if request.url.path == '/' %}text-latte-blue dark:text-frappe-blue{% else %}text-latte-overlay0 dark:text-frappe-overlay0{% endif %}">
+                {% if request.url.path == '/' %}text-nord-light-blue dark:text-nord-dark-blue{% else %}text-nord-light-overlay0 dark:text-nord-dark-overlay0{% endif %}">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                 </svg>
                 Articles
             </a>
             <a href="/feeds" id="mob-nav-feeds" class="flex flex-col items-center gap-1 text-xs font-bold transition-all duration-200
-                {% if request.url.path == '/feeds' %}text-latte-blue dark:text-frappe-blue{% else %}text-latte-overlay0 dark:text-frappe-overlay0{% endif %}">
+                {% if request.url.path == '/feeds' %}text-nord-light-blue dark:text-nord-dark-blue{% else %}text-nord-light-overlay0 dark:text-nord-dark-overlay0{% endif %}">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
                 </svg>
                 Feeds
             </a>
             <a href="/preferences" id="mob-nav-preferences" class="flex flex-col items-center gap-1 text-xs font-bold transition-all duration-200
-                {% if request.url.path == '/preferences' %}text-latte-blue dark:text-frappe-blue{% else %}text-latte-overlay0 dark:text-frappe-overlay0{% endif %}">
+                {% if request.url.path == '/preferences' %}text-nord-light-blue dark:text-nord-dark-blue{% else %}text-nord-light-overlay0 dark:text-nord-dark-overlay0{% endif %}">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -234,9 +222,9 @@
         // Toast notification helper
         function showToast(message, type = 'info') {
             const colors = {
-                'success': 'bg-latte-green dark:bg-frappe-green text-white',
-                'error': 'bg-latte-red dark:bg-frappe-red text-white',
-                'info': 'bg-latte-blue dark:bg-frappe-blue text-white'
+                'success': 'bg-nord-light-green dark:bg-nord-dark-green text-white',
+                'error': 'bg-nord-light-red dark:bg-nord-dark-red text-white',
+                'info': 'bg-nord-light-blue dark:bg-nord-dark-blue text-white'
             };
             
             const toast = document.createElement('div');

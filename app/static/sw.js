@@ -2,8 +2,8 @@
 const CACHE_NAME = 'news-diet-v4';
 const STATIC_ASSETS = [
   '/',
-  '/static/icon-v3.svg',
-  '/static/maskable-icon-v3.svg',
+  '/static/icon-v4.svg',
+  '/static/maskable-icon-v4.svg',
   '/static/manifest.json'
 ];
 
