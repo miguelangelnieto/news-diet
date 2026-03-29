@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- News Diet - GNOME HIG Style (Maskable) -->
+  <!-- Full-bleed dark background -->
+  
+  <!-- Background -->
+  <rect width="128" height="128" fill="#2e3440"/>
+  
+  <!-- Shadow -->
+  <ellipse cx="64" cy="118" rx="36" ry="4" fill="#000" opacity="0.3"/>
+  
+  <!-- Back page (perspective depth) -->
+  <path d="M24,24 L104,24 L104,96 Q104,100 100,100 L28,100 Q24,100 24,96 Z" fill="#4c566a"/>
+  
+  <!-- Front page -->
+  <path d="M18,32 L98,32 L98,104 Q98,108 94,108 L22,108 Q18,108 18,104 Z" fill="#eceff4"/>
+  
+  <!-- Page edge (darker, for depth) -->
+  <path d="M18,104 L94,104 L94,108 L22,108 Q18,108 18,104" fill="#d8dee9"/>
+  
+  <!-- Folded corner -->
+  <path d="M98,32 L98,48 L82,48 L98,32" fill="#e5e9f0"/>
+  <path d="M98,32 L82,48 L98,48 Z" fill="#b8bfd0"/>
+  
+  <!-- Vertical fold line -->
+  <line x1="34" y1="32" x2="34" y2="108" stroke="#d8dee9" stroke-width="1"/>
+  
+  <!-- Headline (bold accent) -->
+  <rect x="42" y="40" width="48" height="4" rx="2" fill="#bf616a"/>
+  <rect x="42" y="50" width="40" height="2" rx="1" fill="#d8dee9"/>
+  <rect x="42" y="56" width="44" height="2" rx="1" fill="#d8dee9"/>
+  
+  <!-- Two columns -->
+  <rect x="42" y="66" width="20" height="2" rx="1" fill="#d8dee9"/>
+  <rect x="42" y="72" width="18" height="2" rx="1" fill="#d8dee9"/>
+  <rect x="42" y="78" width="20" height="2" rx="1" fill="#d8dee9"/>
+  <rect x="42" y="84" width="16" height="2" rx="1" fill="#d8dee9"/>
+  
+  <rect x="66" y="66" width="20" height="2" rx="1" fill="#d8dee9"/>
+  <rect x="66" y="72" width="18" height="2" rx="1" fill="#d8dee9"/>
+  <rect x="66" y="78" width="20" height="2" rx="1" fill="#d8dee9"/>
+  <rect x="66" y="84" width="14" height="2" rx="1" fill="#d8dee9"/>
+  
+  <!-- AI/Brain dot (subtle accent) -->
+  <circle cx="94" cy="94" r="3" fill="#5e81ac"/>
+</svg>

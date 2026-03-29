@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <!-- Symbolic icon - simplified for small sizes -->
+  <path d="M3,2 H12 V12 Q12,14 10,14 H4 Q2,14 2,12 V4 Z" fill="#3b4252"/>
+  <path d="M3,14 L10,14 L10,15 L4,15 Q2,15 2,13 L3,14" fill="#4c566a"/>
+  <line x1="5" y1="2" x2="5" y2="14" stroke="#4c566a" stroke-width="0.5"/>
+  <rect x="6" y="4" width="4" height="0.5" rx="0.25" fill="#d8dee9"/>
+  <rect x="6" y="5.5" width="5" height="0.5" rx="0.25" fill="#d8dee9"/>
+  <rect x="6" y="7" width="4" height="0.5" rx="0.25" fill="#d8dee9"/>
+  <rect x="6" y="8.5" width="5" height="0.5" rx="0.25" fill="#d8dee9"/>
+  <rect x="6" y="10" width="3" height="0.5" rx="0.25" fill="#d8dee9"/>
+  <rect x="6" y="11.5" width="5" height="0.5" rx="0.25" fill="#d8dee9"/>
+  <circle cx="12.5" cy="12" r="1" fill="#5e81ac"/>
+</svg>
