@@ -161,9 +161,9 @@ async def dashboard(request: Request, show_all: bool = False, filter_unread: boo
     total_count = await db.articles.estimated_document_count()
     
     return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
+        request=request,
+        name="index.html",
+        context={
             "articles": articles,
             "unread_count": unread_count,
             "starred_count": starred_count,
@@ -193,9 +193,9 @@ async def feeds_page(request: Request):
     dark_mode = prefs.get("dark_mode", False) if prefs else False
     
     return templates.TemplateResponse(
-        "feeds.html",
-        {
-            "request": request,
+        request=request,
+        name="feeds.html",
+        context={
             "feeds": feeds,
             "dark_mode": dark_mode
         }
@@ -225,9 +225,9 @@ async def preferences_page(request: Request):
         dark_mode = False
     
     return templates.TemplateResponse(
-        "preferences.html",
-        {
-            "request": request,
+        request=request,
+        name="preferences.html",
+        context={
             "preferences": prefs,
             "dark_mode": dark_mode,
             "model_name": settings.openrouter_model if settings.llm_provider == "openrouter" else settings.ollama_model
@@ -270,9 +270,9 @@ async def reader_page(request: Request, article_id: str):
         reading_time = max(1, round(word_count / 200))
     
     return templates.TemplateResponse(
-        "reader.html",
-        {
-            "request": request,
+        request=request,
+        name="reader.html",
+        context={
             "article": article,
             "dark_mode": dark_mode,
             "reading_time": reading_time
