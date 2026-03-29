@@ -2,19 +2,19 @@
   "name": "News Diet",
   "short_name": "News Diet",
   "description": "AI-powered RSS news aggregator",
-  "start_url": "/?v=4",
+  "start_url": "/?v=5",
   "display": "standalone",
   "background_color": "#2e3440",
   "theme_color": "#2e3440",
   "icons": [
     {
-      "src": "/static/icon-v4.svg",
+      "src": "/static/icon-v5.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/static/maskable-icon-v4.svg",
+      "src": "/static/maskable-icon-v5.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"

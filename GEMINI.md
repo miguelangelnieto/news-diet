@@ -78,7 +78,7 @@ The project follows a service-oriented architecture:
 
 ### UI/UX
 - **HTMX:** Used for "Mark as Read", "Star", and "Refresh" actions to provide a responsive feel without reloading the page.
-- **Theming:** Uses the **Catppuccin** color scheme with support for both light and dark modes (persisted in user preferences).
+- **Theming:** Uses the **Nord** color scheme with support for both light and dark modes (persisted in user preferences).
 - **Responsive:** Designed to work well on both desktop and mobile.
 
 ### Coding Style

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="paper-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#eceff4" />
+      <stop offset="100%" stop-color="#e5e9f0" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <stop offset="0" stop-color="black" stop-opacity="0.3"/>
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Shadow -->
+  <rect x="22" y="16" width="84" height="100" rx="10" fill="rgba(0,0,0,0.15)" />
+
+  <!-- Newspaper Base -->
+  <rect x="20" y="12" width="88" height="100" rx="10" fill="url(#paper-grad)" stroke="#d8dee9" stroke-width="1"/>
+
+  <!-- Blue Header -->
+  <path d="M20,22 Q20,12 30,12 L98,12 Q108,12 108,22 L108,40 L20,40 Z" fill="#5e81ac" />
+
+  <!-- RSS Icon in Header -->
+  <circle cx="36" cy="26" r="3" fill="#ebcb8b" />
+  <path d="M33,32 A8,8 0 0 1 41,24" fill="none" stroke="#ebcb8b" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M33,37 A13,13 0 0 1 46,24" fill="none" stroke="#ebcb8b" stroke-width="2.5" stroke-linecap="round" />
+
+  <!-- News Diet Text representation (Header) -->
+  <rect x="56" y="22" width="36" height="3" rx="1.5" fill="#eceff4" opacity="0.8" />
+  <rect x="56" y="29" width="24" height="3" rx="1.5" fill="#eceff4" opacity="0.6" />
+
+  <!-- Content Lines -->
+  <!-- Column 1 -->
+  <rect x="32" y="52" width="28" height="4" rx="2" fill="#bf616a" opacity="0.8" /> <!-- "Urgent" or "Top" story -->
+  <rect x="32" y="62" width="28" height="2" rx="1" fill="#d8dee9" />
+  <rect x="32" y="68" width="28" height="2" rx="1" fill="#d8dee9" />
+  <rect x="32" y="74" width="20" height="2" rx="1" fill="#d8dee9" />
+
+  <rect x="32" y="86" width="28" height="2" rx="1" fill="#d8dee9" />
+  <rect x="32" y="92" width="28" height="2" rx="1" fill="#d8dee9" />
+  <rect x="32" y="98" width="24" height="2" rx="1" fill="#d8dee9" />
+
+  <!-- Column 2 -->
+  <rect x="68" y="52" width="28" height="20" rx="4" fill="#81a1c1" opacity="0.2" /> <!-- "Image" placeholder -->
+  <rect x="68" y="78" width="28" height="2" rx="1" fill="#d8dee9" />
+  <rect x="68" y="84" width="28" height="2" rx="1" fill="#d8dee9" />
+  <rect x="68" y="90" width="28" height="2" rx="1" fill="#d8dee9" />
+  <rect x="68" y="96" width="16" height="2" rx="1" fill="#d8dee9" />
+
+  <!-- Accent dot (AI) -->
+  <circle cx="94" cy="26" r="4" fill="#a3be8c" />
+</svg>
